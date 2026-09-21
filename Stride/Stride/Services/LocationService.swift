@@ -52,12 +52,6 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         isTracking = false
     }
 
-    /// A short burst of updates so the map can centre on the user before a walk starts.
-    func requestSingleLocation() {
-        requestPermission()
-        manager.requestLocation()
-    }
-
     // MARK: - CLLocationManagerDelegate
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
