@@ -9,7 +9,7 @@ struct HistoryView: View {
         var id: String { rawValue }
     }
 
-    enum Range: String, CaseIterable, Identifiable {
+    enum Span: String, CaseIterable, Identifiable {
         case week = "7 days"
         case month = "30 days"
         var id: String { rawValue }
@@ -20,7 +20,7 @@ struct HistoryView: View {
     @EnvironmentObject private var profile: UserProfile
 
     @State private var mode: Mode = .walks
-    @State private var range: Range = .week
+    @State private var span: Span = .week
 
     var body: some View {
         NavigationStack {
@@ -113,12 +113,12 @@ struct HistoryView: View {
 
     private var stepsSection: some View {
         VStack(spacing: 16) {
-            Picker("Range", selection: $range) {
-                ForEach(Range.allCases) { Text($0.rawValue).tag($0) }
+            Picker("Range", selection: $span) {
+                ForEach(Span.allCases) { Text($0.rawValue).tag($0) }
             }
             .pickerStyle(.segmented)
 
-            let days = range == .week ? today.weeklySteps : today.monthlySteps
+            let days = span == .week ? today.weeklySteps : today.monthlySteps
 
             GlassCard {
                 VStack(alignment: .leading, spacing: 12) {

@@ -104,10 +104,11 @@ struct WalkDetailView: View {
         let region = track.region ?? MKCoordinateRegion()
         let trail = track.trail(to: progress)
         let head = track.coordinate(at: progress)
+        let segments = walk.routeSegments
         return Map(initialPosition: .region(region), interactionModes: [.pan, .zoom]) {
             // Faint full route underneath.
-            ForEach(Array(walk.routeSegments.enumerated()), id: \.offset) { _, segment in
-                MapPolyline(coordinates: segment)
+            ForEach(0..<segments.count, id: \.self) { index in
+                MapPolyline(coordinates: segments[index])
                     .stroke(Theme.routeColor.opacity(0.28), lineWidth: 5)
             }
             // The part "walked" so far in the replay.

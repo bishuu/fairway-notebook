@@ -67,15 +67,15 @@ final class UserProfile: ObservableObject {
     private let defaults = UserDefaults.standard
 
     init() {
-        let storedWeight = defaults.double(forKey: Keys.weightLb)
+        let storedWeight = UserDefaults.standard.double(forKey: Keys.weightLb)
         weightLb = storedWeight > 0 ? storedWeight : 160
-        let storedFeet = defaults.integer(forKey: Keys.heightFeet)
+        let storedFeet = UserDefaults.standard.integer(forKey: Keys.heightFeet)
         heightFeet = storedFeet > 0 ? storedFeet : 5
-        heightInches = defaults.object(forKey: Keys.heightInches) == nil ? 8 : defaults.integer(forKey: Keys.heightInches)
-        gender = Gender(rawValue: defaults.string(forKey: Keys.gender) ?? "") ?? .other
-        let storedGoal = defaults.integer(forKey: Keys.dailyGoal)
+        heightInches = UserDefaults.standard.object(forKey: Keys.heightInches) == nil ? 8 : UserDefaults.standard.integer(forKey: Keys.heightInches)
+        gender = Gender(rawValue: UserDefaults.standard.string(forKey: Keys.gender) ?? "") ?? .other
+        let storedGoal = UserDefaults.standard.integer(forKey: Keys.dailyGoal)
         dailyGoal = storedGoal > 0 ? storedGoal : 10_000
-        hasOnboarded = defaults.bool(forKey: Keys.hasOnboarded)
+        hasOnboarded = UserDefaults.standard.bool(forKey: Keys.hasOnboarded)
     }
 
     var body: BodyStats {

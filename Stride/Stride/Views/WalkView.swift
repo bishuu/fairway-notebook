@@ -66,11 +66,12 @@ struct WalkView: View {
     // MARK: - Map
 
     private var map: some View {
-        Map(position: $camera, interactionModes: [.pan, .zoom, .rotate]) {
-            ForEach(Array(session.routeSegments.enumerated()), id: \.offset) { _, segment in
-                MapPolyline(coordinates: segment)
+        let segments = session.routeSegments
+        return Map(position: $camera, interactionModes: [.pan, .zoom, .rotate]) {
+            ForEach(0..<segments.count, id: \.self) { index in
+                MapPolyline(coordinates: segments[index])
                     .stroke(Theme.routeGlow.opacity(0.45), lineWidth: 13)
-                MapPolyline(coordinates: segment)
+                MapPolyline(coordinates: segments[index])
                     .stroke(Theme.routeColor, lineWidth: 5)
             }
             if let start = session.route.first {
@@ -197,7 +198,7 @@ struct WalkView: View {
     private var statsPanel: some View {
         VStack(spacing: 18) {
             Capsule()
-                .fill(.secondary.opacity(0.4))
+                .fill(Color.secondary.opacity(0.4))
                 .frame(width: 40, height: 5)
 
             VStack(spacing: 2) {

@@ -51,11 +51,11 @@ struct StepsChart: View {
         .chartYAxis {
             if compact {
                 AxisMarks(values: .automatic(desiredCount: 2)) { _ in
-                    AxisGridLine().foregroundStyle(.primary.opacity(0.08))
+                    AxisGridLine().foregroundStyle(Color.primary.opacity(0.08))
                 }
             } else {
                 AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
-                    AxisGridLine().foregroundStyle(.primary.opacity(0.08))
+                    AxisGridLine().foregroundStyle(Color.primary.opacity(0.08))
                     AxisValueLabel {
                         if let steps = value.as(Int.self) {
                             Text(steps >= 1000 ? "\(steps / 1000)k" : "\(steps)")

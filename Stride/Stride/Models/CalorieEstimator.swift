@@ -31,9 +31,9 @@ enum CalorieEstimator {
     static func walkingCalories(distanceMeters: Double, seconds: TimeInterval, body: BodyStats) -> Double {
         guard seconds > 0, distanceMeters > 0 else { return 0 }
         let mph = distanceMeters / seconds * 2.2369363
-        let met = met(forSpeedMph: mph)
+        let metValue = met(forSpeedMph: mph)
         let hours = seconds / 3600
-        return met * body.weightKg * hours * body.gender.energyFactor
+        return metValue * body.weightKg * hours * body.gender.energyFactor
     }
 
     /// Calories for a step count when only steps are known (assumes an average 3 mph pace).

@@ -235,7 +235,7 @@ struct BodyInputsForm: View {
                     .buttonStyle(.bordered)
                     .tint(Theme.teal)
 
-                    TextField("lb", value: $profile.weightLb, format: .number.precision(.fractionLength(0...1)))
+                    TextField("lb", value: $profile.weightLb, format: FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1)))
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.center)
                         .font(.headline.monospacedDigit())
