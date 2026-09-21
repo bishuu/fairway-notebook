@@ -25,6 +25,7 @@ enum Theme {
 }
 
 /// A frosted card used across the app.
+@MainActor
 struct GlassCard<Content: View>: View {
     var padding: CGFloat
     private let content: Content

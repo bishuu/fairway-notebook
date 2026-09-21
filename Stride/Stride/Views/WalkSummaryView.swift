@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Shown when a walk ends: review the numbers, then save or discard.
+@MainActor
 struct WalkSummaryView: View {
     var onDone: () -> Void
 

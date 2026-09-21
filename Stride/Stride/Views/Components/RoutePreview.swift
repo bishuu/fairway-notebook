@@ -3,6 +3,7 @@ import CoreLocation
 
 /// Draws a walk's route as a tiny line drawing (no map tiles needed),
 /// used for thumbnails in the history list.
+@MainActor
 struct RoutePreview: View {
     var segments: [[CLLocationCoordinate2D]]
     var lineWidth: CGFloat = 3

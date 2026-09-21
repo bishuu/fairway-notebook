@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// First-launch welcome: body inputs plus the three permissions the app needs.
+@MainActor
 struct OnboardingView: View {
     @EnvironmentObject private var profile: UserProfile
     @EnvironmentObject private var health: HealthKitService

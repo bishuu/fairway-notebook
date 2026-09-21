@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Past walks and the step history chart.
+@MainActor
 struct HistoryView: View {
     enum Mode: String, CaseIterable, Identifiable {
         case walks = "Walks"
@@ -153,6 +154,7 @@ struct HistoryView: View {
 }
 
 /// One walk in the history list.
+@MainActor
 struct WalkRow: View {
     var walk: Walk
 

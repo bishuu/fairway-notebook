@@ -4,6 +4,7 @@ import CoreLocation
 
 /// The live walk: a real-time map with the growing route and a pulsing
 /// walker marker, plus timer, steps, distance, calories and pace.
+@MainActor
 struct WalkView: View {
     @EnvironmentObject private var session: WalkSession
     @EnvironmentObject private var health: HealthKitService

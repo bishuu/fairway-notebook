@@ -81,32 +81,56 @@ final class TodayModel: ObservableObject {
     /// Re-reads today's totals and the history from Apple Health (or the phone).
     func refresh() async {
         motionDenied = pedometer.isDenied
-        let startOfDay = Calendar.current.startOfDay(for: Date())
+        let now = Date()
+        let startOfDay = Calendar.current.startOfDay(for: now)
 
-        // Restart the live pedometer stream if the day has rolled over.
-        if let last = lastRefresh, !Calendar.current.isDate(last, inSameDayAs: Date()) {
+        // A new day: clear yesterday's numbers and restart the live stream from midnight.
+        if let last = lastRefresh, !Calendar.current.isDate(last, inSameDayAs: now) {
+            resetForNewDay()
             startPedometer()
         }
 
         if health.isAvailable, health.hasRequestedAccess {
             let healthSteps = await health.todaySteps()
             let healthDistance = await health.todayDistanceMeters()
-            let phoneNow = await pedometer.query(from: startOfDay, to: Date())
+            // Health receives the phone's steps in batches, minutes behind the motion
+            // chip. Baseline the live delta at the end of Health's latest sample so the
+            // steps taken since then are added on top instead of being lost.
+            let latestSampleEnd = await health.latestStepSampleEnd()
+            let anchor = min(latestSampleEnd ?? now, now)
+            var phoneAtAnchor = 0
+            if anchor > startOfDay {
+                phoneAtAnchor = await pedometer.query(from: startOfDay, to: anchor)?.steps ?? pedometerToday
+            }
+            let phoneNow = await pedometer.query(from: startOfDay, to: now)
             healthTodaySteps = healthSteps
             healthTodayDistance = healthDistance
-            pedometerAtHealthSync = phoneNow?.steps ?? pedometerToday
-            if let phoneNow { pedometerToday = max(pedometerToday, phoneNow.steps) }
+            pedometerAtHealthSync = phoneAtAnchor
+            if let phoneNow {
+                pedometerToday = max(pedometerToday, phoneNow.steps)
+                pedometerDistance = phoneNow.distanceMeters ?? pedometerDistance
+            }
         } else {
             healthTodaySteps = nil
             healthTodayDistance = nil
-            if let phoneNow = await pedometer.query(from: startOfDay, to: Date()) {
+            if let phoneNow = await pedometer.query(from: startOfDay, to: now) {
                 pedometerToday = max(pedometerToday, phoneNow.steps)
                 pedometerDistance = phoneNow.distanceMeters ?? pedometerDistance
             }
         }
         recompute()
         await refreshHistory()
-        lastRefresh = Date()
+        lastRefresh = now
+    }
+
+    private func resetForNewDay() {
+        steps = 0
+        distanceMeters = 0
+        pedometerToday = 0
+        pedometerDistance = 0
+        pedometerAtHealthSync = 0
+        healthTodaySteps = nil
+        healthTodayDistance = nil
     }
 
     private func refreshHistory() async {
@@ -128,11 +152,14 @@ final class TodayModel: ObservableObject {
     }
 
     private func recompute() {
+        let blended: Int
         if let healthTodaySteps {
-            steps = healthTodaySteps + max(0, pedometerToday - pedometerAtHealthSync)
+            blended = healthTodaySteps + max(0, pedometerToday - pedometerAtHealthSync)
         } else {
-            steps = pedometerToday
+            blended = pedometerToday
         }
+        // Within a day the count only ever grows (Health can briefly lag the live number).
+        steps = max(steps, blended)
         if let healthTodayDistance, healthTodayDistance > 0 {
             distanceMeters = max(healthTodayDistance, pedometerDistance)
         } else if pedometerDistance > 0 {

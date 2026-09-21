@@ -55,7 +55,6 @@ final class UserProfile: ObservableObject {
         static let gender = "profile.gender"
         static let dailyGoal = "profile.dailyGoal"
         static let hasOnboarded = "profile.hasOnboarded"
-        static let healthRequested = "profile.healthRequested"
     }
 
     @Published var weightLb: Double { didSet { save() } }
@@ -64,7 +63,6 @@ final class UserProfile: ObservableObject {
     @Published var gender: Gender { didSet { save() } }
     @Published var dailyGoal: Int { didSet { save() } }
     @Published var hasOnboarded: Bool { didSet { save() } }
-    @Published var healthRequested: Bool { didSet { save() } }
 
     private let defaults = UserDefaults.standard
 
@@ -78,7 +76,6 @@ final class UserProfile: ObservableObject {
         let storedGoal = defaults.integer(forKey: Keys.dailyGoal)
         dailyGoal = storedGoal > 0 ? storedGoal : 10_000
         hasOnboarded = defaults.bool(forKey: Keys.hasOnboarded)
-        healthRequested = defaults.bool(forKey: Keys.healthRequested)
     }
 
     var body: BodyStats {
@@ -94,6 +91,5 @@ final class UserProfile: ObservableObject {
         defaults.set(gender.rawValue, forKey: Keys.gender)
         defaults.set(dailyGoal, forKey: Keys.dailyGoal)
         defaults.set(hasOnboarded, forKey: Keys.hasOnboarded)
-        defaults.set(healthRequested, forKey: Keys.healthRequested)
     }
 }

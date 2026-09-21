@@ -139,6 +139,18 @@ final class HealthKitService: ObservableObject {
         }
     }
 
+    /// When the most recent step sample in Health ends (nil when there are none).
+    func latestStepSampleEnd() async -> Date? {
+        guard isAvailable else { return nil }
+        return await withCheckedContinuation { continuation in
+            let sort = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+            let query = HKSampleQuery(sampleType: stepType, predicate: nil, limit: 1, sortDescriptors: [sort]) { _, samples, _ in
+                continuation.resume(returning: samples?.first?.endDate)
+            }
+            store.execute(query)
+        }
+    }
+
     /// Calls `handler` on the main thread whenever new step data lands in Health.
     func observeSteps(_ handler: @escaping () -> Void) {
         guard isAvailable else { return }
@@ -204,6 +216,18 @@ final class HealthKitService: ObservableObject {
         }
         if !samples.isEmpty {
             try await builder.addSamples(samples)
+        }
+
+        // Pauses so Health shows the active duration rather than wall-clock time.
+        var events: [HKWorkoutEvent] = []
+        for pause in walk.pauses where pause.start >= walk.start && pause.end <= walk.end {
+            events.append(HKWorkoutEvent(type: .pause, dateInterval: DateInterval(start: pause.start, duration: 0), metadata: nil))
+            if pause.end < walk.end {
+                events.append(HKWorkoutEvent(type: .resume, dateInterval: DateInterval(start: pause.end, duration: 0), metadata: nil))
+            }
+        }
+        if !events.isEmpty {
+            try await builder.addWorkoutEvents(events)
         }
         try await builder.endCollection(at: walk.end)
 

@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Body inputs, daily goal, Apple Health connection and permissions.
+@MainActor
 struct ProfileView: View {
     @EnvironmentObject private var profile: UserProfile
     @EnvironmentObject private var health: HealthKitService
@@ -216,6 +217,7 @@ struct ProfileView: View {
 }
 
 /// Weight, height and gender controls, shared by Profile and onboarding.
+@MainActor
 struct BodyInputsForm: View {
     @EnvironmentObject private var profile: UserProfile
     @FocusState private var weightFocused: Bool

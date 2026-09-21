@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 /// Bar chart of steps per day with the daily goal line.
+@MainActor
 struct StepsChart: View {
     var days: [DailySteps]
     var goal: Int

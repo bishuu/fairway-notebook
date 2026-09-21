@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Home screen: the live step ring, today's numbers, the Start Walk button
 /// and a glance at the week.
+@MainActor
 struct TodayView: View {
     var openWalk: () -> Void
 
@@ -40,7 +41,7 @@ struct TodayView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
-            today.start()
+            if profile.hasOnboarded { today.start() }
             withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) { appeared = true }
         }
         .onChange(of: scenePhase) { _, phase in

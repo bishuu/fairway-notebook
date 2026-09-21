@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A short shower of confetti, shown when the daily goal is reached.
+@MainActor
 struct ConfettiBurst: View {
     var trigger: Int
 

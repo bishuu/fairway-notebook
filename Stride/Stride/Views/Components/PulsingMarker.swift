@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// The live "you are here" marker on the walk map: a walker with pulsing rings.
+@MainActor
 struct PulsingMarker: View {
     var color: Color = Theme.sky
     var isMoving: Bool = true
@@ -38,6 +39,7 @@ struct PulsingMarker: View {
 }
 
 /// A small flag marking where a walk began.
+@MainActor
 struct StartPin: View {
     var body: some View {
         ZStack {
@@ -53,6 +55,7 @@ struct StartPin: View {
 }
 
 /// A small chequered-style marker for the end of a walk.
+@MainActor
 struct EndPin: View {
     var body: some View {
         Image(systemName: "flag.checkered.circle.fill")

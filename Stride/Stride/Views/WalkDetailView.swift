@@ -3,6 +3,7 @@ import MapKit
 import Combine
 
 /// A saved walk: the route on a map with an animated replay, plus its stats.
+@MainActor
 struct WalkDetailView: View {
     var walkID: UUID
 

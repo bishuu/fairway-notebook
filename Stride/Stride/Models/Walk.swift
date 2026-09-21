@@ -43,6 +43,8 @@ struct Walk: Codable, Identifiable, Hashable {
     var distanceMeters: Double
     var calories: Double
     var route: [RoutePoint]
+    /// Times the walk was paused, so Apple Health can exclude them.
+    var pauses: [DateInterval] = []
     var savedToHealth: Bool = false
 
     var averageSpeedMetersPerSecond: Double {

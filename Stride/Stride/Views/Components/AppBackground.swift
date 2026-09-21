@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Soft, slowly drifting gradient blobs behind every screen.
+@MainActor
 struct AppBackground: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var drift = false

@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A compact stat with an icon, big number and caption.
+@MainActor
 struct StatTile: View {
     var icon: String
     var value: String
@@ -44,6 +45,7 @@ struct StatTile: View {
 }
 
 /// Large number used on the live walk screen.
+@MainActor
 struct BigStat: View {
     var value: String
     var label: String

@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// The big animated step ring on the Today screen.
+@MainActor
 struct ProgressRing: View {
     var progress: Double          // 0...1
     var lineWidth: CGFloat = 24

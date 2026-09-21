@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Tab bar shell: Today, History, Profile. The live walk opens over the top.
+@MainActor
 struct RootView: View {
     enum Tab: Hashable { case today, history, profile }
 
@@ -40,5 +41,18 @@ struct RootView: View {
         .onAppear {
             if profile.hasOnboarded { today.start() }
         }
+        .onChange(of: profile.hasOnboarded) { _, done in
+            if done { today.start() }
+        }
+        .alert("Apple Health", isPresented: healthErrorBinding) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(session.healthSaveError ?? "")
+        }
+    }
+
+    private var healthErrorBinding: Binding<Bool> {
+        Binding(get: { session.healthSaveError != nil },
+                set: { if !$0 { session.healthSaveError = nil } })
     }
 }

@@ -39,6 +39,8 @@ final class WalkSession: ObservableObject {
     private var lastAcceptedLocation: CLLocation?
     private var ticker: AnyCancellable?
     private var endDate: Date?
+    private var pauseStartedAt: Date?
+    private var pauses: [DateInterval] = []
 
     init(location: LocationService, pedometer: PedometerService, health: HealthKitService,
          profile: UserProfile, store: WalkStore) {
@@ -108,6 +110,7 @@ final class WalkSession: ObservableObject {
         segmentPedometerDistance = 0
         pedometer.stopLiveUpdates()
         location.stopTracking()
+        pauseStartedAt = Date()
         state = .paused
         tick()
     }
@@ -115,6 +118,10 @@ final class WalkSession: ObservableObject {
     func resume() {
         guard state == .paused else { return }
         let now = Date()
+        if let pauseStartedAt {
+            pauses.append(DateInterval(start: pauseStartedAt, end: now))
+        }
+        pauseStartedAt = nil
         segmentStart = now
         segmentIndex += 1
         lastAcceptedLocation = nil
@@ -129,12 +136,17 @@ final class WalkSession: ObservableObject {
             accumulatedElapsed += Date().timeIntervalSince(segmentStart)
         }
         segmentStart = nil
-        endDate = Date()
+        let end = Date()
+        endDate = end
+        if let pauseStartedAt, pauseStartedAt < end {
+            pauses.append(DateInterval(start: pauseStartedAt, end: end))
+        }
+        pauseStartedAt = nil
         pedometer.stopLiveUpdates()
         location.stopTracking()
         ticker = nil
         state = .finished
-        recomputeDerived()
+        tick()
     }
 
     /// Saves the finished walk to history and to Apple Health.
@@ -146,7 +158,8 @@ final class WalkSession: ObservableObject {
                         steps: steps,
                         distanceMeters: distanceMeters,
                         calories: calories,
-                        route: route)
+                        route: route,
+                        pauses: pauses)
         store.add(walk)
         lastSavedWalk = walk
         state = .idle
@@ -192,6 +205,8 @@ final class WalkSession: ObservableObject {
         gpsDistance = 0
         lastAcceptedLocation = nil
         endDate = nil
+        pauseStartedAt = nil
+        pauses = []
     }
 
     private func beginSegment(at date: Date) {
@@ -240,8 +255,11 @@ final class WalkSession: ObservableObject {
         // Prefer GPS outdoors; fall back to the motion chip's estimate indoors.
         if route.count >= 3, gpsDistance > 20 {
             distanceMeters = gpsDistance
-        } else {
+        } else if pedometerTotal > 0 || gpsDistance > 0 {
             distanceMeters = max(pedometerTotal, gpsDistance)
+        } else {
+            // No GPS and no motion-chip distance yet: estimate from stride length.
+            distanceMeters = CalorieEstimator.distanceFromSteps(steps, body: profile.body)
         }
         calories = CalorieEstimator.walkingCalories(distanceMeters: distanceMeters,
                                                     seconds: elapsed,
