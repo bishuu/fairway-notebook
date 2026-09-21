@@ -1,0 +1,222 @@
+import SwiftUI
+import MapKit
+import Combine
+
+/// A saved walk: the route on a map with an animated replay, plus its stats.
+struct WalkDetailView: View {
+    var walkID: UUID
+
+    @EnvironmentObject private var store: WalkStore
+    @EnvironmentObject private var health: HealthKitService
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var track = RouteTrack(points: [])
+    @State private var progress: Double = 0
+    @State private var isReplaying = false
+    @State private var showDeleteConfirm = false
+    @State private var healthMessage: String?
+
+    private let replayDuration: Double = 9
+    private let ticker = Timer.publish(every: 1 / 30, on: .main, in: .common).autoconnect()
+
+    private var walk: Walk? { store.walk(with: walkID) }
+
+    var body: some View {
+        ZStack {
+            AppBackground()
+            if let walk {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        if walk.hasRoute {
+                            mapCard(walk)
+                            replayControls
+                        } else {
+                            GlassCard {
+                                Label("No route was recorded for this walk (location was off or indoors).", systemImage: "map")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        statsGrid(walk)
+                        detailsCard(walk)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 30)
+                }
+            } else {
+                ContentUnavailableView("Walk not found", systemImage: "questionmark.circle")
+            }
+        }
+        .navigationTitle(walk.map { Format.walkTitle($0.start) } ?? "Walk")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    if let walk, !walk.savedToHealth, health.canSaveWorkouts {
+                        Button {
+                            saveToHealth(walk)
+                        } label: {
+                            Label("Save to Apple Health", systemImage: "heart")
+                        }
+                    }
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        Label("Delete Walk", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .confirmationDialog("Delete this walk?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                if let walk { store.delete(walk) }
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes it from Stride's history. Workouts already saved to Apple Health stay there.")
+        }
+        .alert("Apple Health", isPresented: Binding(get: { healthMessage != nil }, set: { if !$0 { healthMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(healthMessage ?? "")
+        }
+        .onAppear {
+            if let walk { track = RouteTrack(points: walk.route) }
+        }
+        .onReceive(ticker) { _ in
+            guard isReplaying else { return }
+            progress += (1 / 30) / replayDuration
+            if progress >= 1 {
+                progress = 1
+                isReplaying = false
+            }
+        }
+    }
+
+    // MARK: - Map
+
+    private func mapCard(_ walk: Walk) -> some View {
+        let region = track.region ?? MKCoordinateRegion()
+        let trail = track.trail(to: progress)
+        let head = track.coordinate(at: progress)
+        return Map(initialPosition: .region(region), interactionModes: [.pan, .zoom]) {
+            // Faint full route underneath.
+            ForEach(Array(walk.routeSegments.enumerated()), id: \.offset) { _, segment in
+                MapPolyline(coordinates: segment)
+                    .stroke(Theme.routeColor.opacity(0.28), lineWidth: 5)
+            }
+            // The part "walked" so far in the replay.
+            if trail.count > 1 {
+                MapPolyline(coordinates: trail)
+                    .stroke(Theme.routeGlow.opacity(0.45), lineWidth: 12)
+                MapPolyline(coordinates: trail)
+                    .stroke(Theme.routeColor, lineWidth: 5)
+            }
+            if let start = track.points.first {
+                Annotation("Start", coordinate: start, anchor: .center) { StartPin() }
+                    .annotationTitles(.hidden)
+            }
+            if let end = track.points.last {
+                Annotation("Finish", coordinate: end, anchor: .center) { EndPin() }
+                    .annotationTitles(.hidden)
+            }
+            if let head {
+                Annotation("Walker", coordinate: head, anchor: .center) {
+                    PulsingMarker(isMoving: isReplaying)
+                        .scaleEffect(0.8)
+                }
+                .annotationTitles(.hidden)
+            }
+        }
+        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+        .frame(height: 340)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
+                .strokeBorder(.white.opacity(0.18), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.15), radius: 16, y: 8)
+    }
+
+    private var replayControls: some View {
+        GlassCard(padding: 14) {
+            HStack(spacing: 14) {
+                Button {
+                    if isReplaying {
+                        isReplaying = false
+                    } else {
+                        if progress >= 1 { progress = 0 }
+                        isReplaying = true
+                    }
+                } label: {
+                    Image(systemName: isReplaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .frame(width: 46, height: 46)
+                        .background(Theme.buttonGradient, in: Circle())
+                        .foregroundStyle(.black.opacity(0.85))
+                }
+                .buttonStyle(PressableStyle())
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(isReplaying ? "Replaying your walk…" : (progress >= 1 ? "Replay finished" : "Replay this walk"))
+                        .font(.subheadline.weight(.semibold))
+                    Slider(value: $progress, in: 0...1) { editing in
+                        if editing { isReplaying = false }
+                    }
+                    .tint(Theme.teal)
+                }
+            }
+        }
+    }
+
+    // MARK: - Stats
+
+    private func statsGrid(_ walk: Walk) -> some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            StatTile(icon: "figure.walk", value: Format.steps(walk.steps), label: "Steps", tint: Theme.mint)
+            StatTile(icon: "point.topleft.down.to.point.bottomright.curvepath.fill",
+                     value: Format.miles(walk.distanceMeters), unit: "mi", label: "Distance", tint: Theme.sky)
+            StatTile(icon: "flame.fill", value: Format.calories(walk.calories), unit: "kcal", label: "Calories", tint: Theme.flame)
+            StatTile(icon: "timer", value: Format.duration(walk.activeSeconds), label: "Duration", tint: Theme.violet)
+            StatTile(icon: "speedometer", value: Format.pace(secondsPerMile: walk.paceSecondsPerMile), unit: "/mi", label: "Avg pace", tint: Theme.gold)
+            StatTile(icon: "gauge.with.dots.needle.33percent", value: Format.speedMph(metersPerSecond: walk.averageSpeedMetersPerSecond), label: "Avg speed", tint: Theme.rose)
+        }
+    }
+
+    private func detailsCard(_ walk: Walk) -> some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 10) {
+                row("Started", Format.dateTime(walk.start))
+                row("Finished", walk.end.formatted(date: .omitted, time: .shortened))
+                row("Apple Health", walk.savedToHealth ? "Saved as a walking workout" : "Not saved")
+            }
+        }
+    }
+
+    private func row(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label).foregroundStyle(.secondary)
+            Spacer()
+            Text(value).fontWeight(.semibold)
+        }
+        .font(.subheadline)
+    }
+
+    private func saveToHealth(_ walk: Walk) {
+        Task {
+            do {
+                try await health.saveWorkout(walk)
+                var saved = walk
+                saved.savedToHealth = true
+                store.update(saved)
+                healthMessage = "Saved to Apple Health."
+            } catch {
+                healthMessage = error.localizedDescription
+            }
+        }
+    }
+}
