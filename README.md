@@ -11,6 +11,7 @@ Open-Meteo. Calorie estimates use MET values from the Compendium of Physical Act
 
 ## Stride (iPhone step counter)
 
-A native iOS step counter with live walk tracking on a map, Apple Health sync, history and
-calorie estimates lives in the `Stride` folder. See `Stride/README.md` for how to install it on
-your iPhone.
+A native iOS step counter lives in the `Stride` folder: live step tracking, walk workouts on a
+map with a cinematic replay, Home Screen and Lock Screen widgets, a Dynamic Island Live Activity,
+Apple Health sync, badges and trends, and calorie estimates from your body inputs. See
+`Stride/README.md` for how to install it on your iPhone.

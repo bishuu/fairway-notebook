@@ -87,7 +87,9 @@ struct RouteTrack {
     // MARK: - Lookups
 
     private func index(forFraction fraction: Double) -> (Int, Double) {
-        guard samples.count > 1, total > 0 else { return (0, 0) }
+        guard samples.count > 1 else { return (0, 0) }
+        // A route with no length at all still has a valid first pair.
+        guard total > 0 else { return (1, 0) }
         let target = min(max(fraction, 0), 1) * total
         var index = 1
         while index < samples.count - 1, samples[index].distance < target { index += 1 }

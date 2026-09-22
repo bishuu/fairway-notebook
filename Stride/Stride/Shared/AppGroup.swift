@@ -26,7 +26,14 @@ enum AppGroup {
     /// its data, and it says so on its face.
     static let defaults: UserDefaults = UserDefaults(suiteName: identifier) ?? .standard
 
-    static var isShared: Bool { UserDefaults(suiteName: identifier) != nil }
+    /// True when the shared container really works. Creating the suite always
+    /// succeeds, so this writes a value and reads it back to be sure.
+    static var isShared: Bool {
+        guard let shared = UserDefaults(suiteName: identifier) else { return false }
+        let probe = "shared.probe"
+        shared.set(true, forKey: probe)
+        return shared.bool(forKey: probe)
+    }
 
     private enum Keys {
         static let snapshot = "shared.snapshot"

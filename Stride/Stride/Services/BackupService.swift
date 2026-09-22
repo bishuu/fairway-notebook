@@ -32,6 +32,7 @@ struct BackupDocument: FileDocument {
     }
 }
 
+@MainActor
 enum BackupService {
     private static var encoder: JSONEncoder {
         let encoder = JSONEncoder()

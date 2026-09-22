@@ -31,10 +31,12 @@ struct StepsProvider: TimelineProvider {
     }
 
     private func currentEntry() -> StepsEntry {
-        guard AppGroup.isShared else {
+        guard let snapshot = AppGroup.loadSnapshot() else {
+            // Either the app has not run yet, or the shared container is not
+            // available on this build. Either way, there is nothing to show.
             return StepsEntry(date: Date(), snapshot: nil, unavailable: true)
         }
-        return StepsEntry(date: Date(), snapshot: AppGroup.loadSnapshot())
+        return StepsEntry(date: Date(), snapshot: snapshot)
     }
 }
 

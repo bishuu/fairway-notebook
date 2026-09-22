@@ -56,7 +56,7 @@ struct RootView: View {
             case .background:
                 // Re-book tonight's nudge with the numbers as they stand.
                 notifications.scheduleNudge(steps: today.steps, goal: profile.dailyGoal)
-                today.publishSnapshot(walkActive: session.isRunning)
+                today.publishSnapshot(walkActive: session.isRunning, force: true)
                 WidgetCenter.shared.reloadAllTimelines()
             default:
                 break

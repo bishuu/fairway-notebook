@@ -267,8 +267,8 @@ struct ReplayView: View {
     }
 
     private func advance() {
-        frame &+= 1
         guard isPlaying else { return }
+        frame &+= 1
         let step = (1 / frameRate) * speed / baseDuration
         progress = min(progress + step, 1)
         if progress >= 1 {

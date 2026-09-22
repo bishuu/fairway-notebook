@@ -26,6 +26,7 @@ final class TodayModel: ObservableObject {
     private var pedometerDistance: Double = 0
     private var refreshTimer: AnyCancellable?
     private var isRunning = false
+    private var lastPublish = Date.distantPast
 
     init(pedometer: PedometerService, health: HealthKitService, profile: UserProfile) {
         self.pedometer = pedometer
@@ -49,8 +50,12 @@ final class TodayModel: ObservableObject {
         return weeklySteps.reduce(0) { $0 + $1.steps } / weeklySteps.count
     }
 
-    /// Hands today's numbers to the widgets and asks them to redraw.
-    func publishSnapshot(walkActive: Bool = false) {
+    /// Hands today's numbers to the widgets and asks them to redraw. Throttled,
+    /// because steps arrive far more often than a widget can usefully change.
+    func publishSnapshot(walkActive: Bool = false, force: Bool = false) {
+        let now = Date()
+        guard force || now.timeIntervalSince(lastPublish) >= 60 else { return }
+        lastPublish = now
         let snapshot = StrideSnapshot(steps: steps,
                                       goal: profile.dailyGoal,
                                       distanceMeters: distanceMeters,
@@ -137,7 +142,7 @@ final class TodayModel: ObservableObject {
         await refreshHistory()
         streakDays = AchievementEngine.streak(days: monthlySteps, goal: profile.dailyGoal)
         lastRefresh = now
-        publishSnapshot()
+        publishSnapshot(force: true)
     }
 
     private func resetForNewDay() {

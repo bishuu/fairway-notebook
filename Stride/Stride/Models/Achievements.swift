@@ -38,50 +38,41 @@ struct PersonalRecord: Identifiable, Hashable {
 /// Works out streaks, badges and records from the saved walks and step history.
 enum AchievementEngine {
 
-    /// Consecutive days up to today where the step goal was met. Today only
-    /// breaks the streak once it is over, so a quiet morning does not reset it.
+    /// Consecutive days up to today where the step goal was met. Today counts
+    /// only once it is met, so a quiet morning does not wipe out the streak.
     static func streak(days: [DailySteps], goal: Int) -> Int {
         guard goal > 0 else { return 0 }
         let calendar = Calendar.current
-        let sorted = days.sorted { $0.date > $1.date }
+        let met = Set(days.filter { $0.steps >= goal }.map { calendar.startOfDay(for: $0.date) })
+        guard !met.isEmpty else { return 0 }
+
+        let today = calendar.startOfDay(for: Date())
+        var cursor = met.contains(today)
+            ? today
+            : (calendar.date(byAdding: .day, value: -1, to: today) ?? today)
+
         var streak = 0
-        var expected = calendar.startOfDay(for: Date())
-        for day in sorted {
-            let dayStart = calendar.startOfDay(for: day.date)
-            if dayStart > expected { continue }
-            if dayStart < expected { break }
-            if day.steps >= goal {
-                streak += 1
-            } else if calendar.isDateInToday(dayStart) {
-                // Today is still in play; look at yesterday instead.
-            } else {
-                break
-            }
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: expected) else { break }
-            expected = previous
+        while met.contains(cursor) {
+            streak += 1
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
+            cursor = previous
         }
         return streak
     }
 
+    /// The longest run of goal days anywhere in the history given.
     static func bestStreak(days: [DailySteps], goal: Int) -> Int {
         guard goal > 0 else { return 0 }
         let calendar = Calendar.current
-        let sorted = days.sorted { $0.date < $1.date }
-        var best = 0
-        var run = 0
-        var previousDay: Date?
-        for day in sorted {
-            let dayStart = calendar.startOfDay(for: day.date)
-            let consecutive = previousDay.map {
-                calendar.dateComponents([.day], from: $0, to: dayStart).day == 1
-            } ?? false
-            if day.steps >= goal {
-                run = consecutive ? run + 1 : 1
-                best = max(best, run)
-            } else {
-                run = 0
-            }
-            previousDay = dayStart
+        let met = Set(days.filter { $0.steps >= goal }.map { calendar.startOfDay(for: $0.date) }).sorted()
+        guard !met.isEmpty else { return 0 }
+
+        var best = 1
+        var run = 1
+        for index in 1..<met.count {
+            let gap = calendar.dateComponents([.day], from: met[index - 1], to: met[index]).day ?? 0
+            run = gap == 1 ? run + 1 : 1
+            best = max(best, run)
         }
         return best
     }
