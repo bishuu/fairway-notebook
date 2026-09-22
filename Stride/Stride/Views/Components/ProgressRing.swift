@@ -20,7 +20,7 @@ struct ProgressRing: View {
                     .stroke(Color.primary.opacity(0.08), lineWidth: lineWidth)
 
                 Circle()
-                    .trim(from: 0, to: max(clamped, 0.003))
+                    .trim(from: 0, to: CGFloat(max(clamped, 0.003)))
                     .stroke(Theme.ringGradient, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .shadow(color: Theme.mint.opacity(goalReached ? 0.8 : 0.35), radius: goalReached ? 18 : 8)

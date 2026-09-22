@@ -228,7 +228,7 @@ struct WidgetRing: View {
             Circle()
                 .stroke(Color.white.opacity(0.14), lineWidth: lineWidth)
             Circle()
-                .trim(from: 0, to: max(min(progress, 1), 0.004))
+                .trim(from: 0, to: CGFloat(max(min(progress, 1), 0.004)))
                 .stroke(AngularGradient(colors: [Theme.teal, Theme.mint, Theme.sky, Theme.teal],
                                         center: .center),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
