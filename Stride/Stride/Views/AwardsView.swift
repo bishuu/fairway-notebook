@@ -19,18 +19,19 @@ struct AwardsView: View {
 
     var body: some View {
         let badges = achievements
+        let bests = records
         let earned = badges.filter { $0.unlocked }
         let locked = badges.filter { !$0.unlocked }.sorted { $0.progress > $1.progress }
 
         VStack(spacing: 16) {
             streakCard(earnedCount: earned.count, total: badges.count)
 
-            if !records.isEmpty {
+            if !bests.isEmpty {
                 GlassCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("Personal bests", systemImage: "trophy.fill")
                             .font(.headline)
-                        ForEach(records) { record in
+                        ForEach(bests) { record in
                             HStack(spacing: 12) {
                                 Image(systemName: record.icon)
                                     .font(.system(size: 14, weight: .bold))

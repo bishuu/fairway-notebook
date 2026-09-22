@@ -20,20 +20,22 @@ enum Units: String, CaseIterable, Identifiable, Codable {
 enum AppGroup {
     static let identifier = "group.com.bishuu.stride"
 
+    /// Creating a suite succeeds whether or not the App Group was granted, so
+    /// the only honest test is whether the shared container exists on disk.
+    private static let containerExists: Bool = {
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) != nil
+    }()
+
     /// Falls back to the app's own defaults when the App Group is unavailable
     /// (for example when the project is signed with a free Apple ID that does
     /// not carry the capability). The app keeps working; only the widget loses
     /// its data, and it says so on its face.
-    static let defaults: UserDefaults = UserDefaults(suiteName: identifier) ?? .standard
+    static let defaults: UserDefaults = {
+        guard containerExists, let shared = UserDefaults(suiteName: identifier) else { return .standard }
+        return shared
+    }()
 
-    /// True when the shared container really works. Creating the suite always
-    /// succeeds, so this writes a value and reads it back to be sure.
-    static var isShared: Bool {
-        guard let shared = UserDefaults(suiteName: identifier) else { return false }
-        let probe = "shared.probe"
-        shared.set(true, forKey: probe)
-        return shared.bool(forKey: probe)
-    }
+    static var isShared: Bool { containerExists }
 
     private enum Keys {
         static let snapshot = "shared.snapshot"

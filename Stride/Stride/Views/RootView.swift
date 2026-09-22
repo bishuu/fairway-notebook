@@ -45,6 +45,9 @@ struct RootView: View {
         .onAppear {
             if profile.hasOnboarded { today.start() }
             Task { await notifications.refreshStatus() }
+            // Siri and the widget set these before this view exists on a cold
+            // launch, so onChange alone would miss them.
+            handlePendingIntents()
         }
         .onChange(of: profile.hasOnboarded) { _, done in
             if done { today.start() }
@@ -63,16 +66,10 @@ struct RootView: View {
             }
         }
         .onChange(of: intents.startWalkRequested) { _, requested in
-            guard requested else { return }
-            intents.startWalkRequested = false
-            selectedTab = .today
-            if !session.isRunning { session.start() }
-            showWalk = true
+            if requested { handlePendingIntents() }
         }
         .onChange(of: intents.showTodayRequested) { _, requested in
-            guard requested else { return }
-            intents.showTodayRequested = false
-            selectedTab = .today
+            if requested { handlePendingIntents() }
         }
         .onOpenURL { url in
             switch url.host {
@@ -86,6 +83,19 @@ struct RootView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(session.healthSaveError ?? "")
+        }
+    }
+
+    private func handlePendingIntents() {
+        if intents.startWalkRequested {
+            intents.startWalkRequested = false
+            selectedTab = .today
+            if !session.isRunning { session.start() }
+            showWalk = true
+        }
+        if intents.showTodayRequested {
+            intents.showTodayRequested = false
+            selectedTab = .today
         }
     }
 

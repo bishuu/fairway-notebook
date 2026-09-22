@@ -10,7 +10,6 @@ struct TodayView: View {
     @EnvironmentObject private var profile: UserProfile
     @EnvironmentObject private var session: WalkSession
     @EnvironmentObject private var health: HealthKitService
-    @Environment(\.scenePhase) private var scenePhase
 
     @State private var goalCelebrations = 0
     @State private var appeared = false
@@ -41,11 +40,8 @@ struct TodayView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
-            if profile.hasOnboarded { today.start() }
+            // RootView owns starting and refreshing the step count.
             withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) { appeared = true }
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await today.refresh() } }
         }
         .onChange(of: today.goalReached) { wasReached, isReached in
             if isReached && !wasReached && appeared { goalCelebrations += 1 }

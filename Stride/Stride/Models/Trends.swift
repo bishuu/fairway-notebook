@@ -58,21 +58,24 @@ enum Trends {
             totals[key] = entry
         }
 
-        let buckets = totals.keys.sorted().map { key -> TrendBucket in
+        let thisStart = bucketStart(now)
+        // The step history only reaches back 30 days, so an older bucket can be
+        // a partial period. Showing one would exaggerate every comparison.
+        let requiredDays = period == .week ? 7 : 28
+
+        let buckets = totals.keys.sorted().compactMap { key -> TrendBucket? in
             let entry = totals[key] ?? (0, 0)
-            let label: String
-            if period == .week {
-                label = key.formatted(.dateTime.month(.abbreviated).day())
-            } else {
-                label = key.formatted(.dateTime.month(.abbreviated))
-            }
+            guard key == thisStart || entry.days >= requiredDays else { return nil }
+            let label = period == .week
+                ? key.formatted(.dateTime.month(.abbreviated).day())
+                : key.formatted(.dateTime.month(.abbreviated))
             return TrendBucket(start: key, label: label, steps: entry.steps, days: entry.days)
         }
 
-        let thisStart = bucketStart(now)
         let previousStart = calendar.date(byAdding: component, value: -1, to: thisStart) ?? thisStart
         let currentSteps = totals[thisStart]?.steps ?? 0
-        let previousSteps = totals[previousStart]?.steps ?? 0
+        let previousEntry = totals[previousStart] ?? (steps: 0, days: 0)
+        let previousSteps = previousEntry.days >= requiredDays ? previousEntry.steps : 0
 
         let periodWalks = walks.filter { $0.start >= thisStart }
         let label = period == .week ? "This week" : "This month"

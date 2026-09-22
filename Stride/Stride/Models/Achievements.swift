@@ -47,15 +47,16 @@ enum AchievementEngine {
         guard !met.isEmpty else { return 0 }
 
         let today = calendar.startOfDay(for: Date())
-        var cursor = met.contains(today)
+        var cursor = calendar.startOfDay(for: met.contains(today)
             ? today
-            : (calendar.date(byAdding: .day, value: -1, to: today) ?? today)
+            : (calendar.date(byAdding: .day, value: -1, to: today) ?? today))
 
         var streak = 0
         while met.contains(cursor) {
             streak += 1
             guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
-            cursor = previous
+            // Re-normalise: in a few time zones a DST change skips midnight.
+            cursor = calendar.startOfDay(for: previous)
         }
         return streak
     }
@@ -124,7 +125,11 @@ enum AchievementEngine {
     }
 
     static func achievements(walks: [Walk], days: [DailySteps], goal: Int) -> [Achievement] {
+        let byDate = walks.sorted { $0.start < $1.start }
         let totalDistance = walks.reduce(0) { $0 + $1.distanceMeters }
+        // The day a streak badge was earned is unknowable after the fact, so
+        // the most recent goal day stands in. It is stable between redraws.
+        let lastGoalDay = days.filter { $0.steps >= goal }.map { $0.date }.max()
         let currentStreak = streak(days: days, goal: goal)
         let best = max(bestStreak(days: days, goal: goal), currentStreak)
         let bestDay = days.map { $0.steps }.max() ?? 0
@@ -149,12 +154,12 @@ enum AchievementEngine {
         list.append(Achievement(id: "explorer", title: "Explorer", detail: "Record 10 walks",
                                 icon: "map.fill", tier: .bronze,
                                 progress: min(Double(walks.count) / 10, 1),
-                                unlockedOn: walks.count >= 10 ? walks.sorted { $0.start < $1.start }[9].start : nil))
+                                unlockedOn: byDate.count >= 10 ? byDate[9].start : nil))
 
         list.append(Achievement(id: "trailblazer", title: "Trailblazer", detail: "Record 50 walks",
                                 icon: "signpost.right.fill", tier: .silver,
                                 progress: min(Double(walks.count) / 50, 1),
-                                unlockedOn: walks.count >= 50 ? walks.sorted { $0.start < $1.start }[49].start : nil))
+                                unlockedOn: byDate.count >= 50 ? byDate[49].start : nil))
 
         list.append(Achievement(id: "fiveK", title: "5K Club", detail: "Walk 5 km in one go",
                                 icon: "figure.walk.circle.fill", tier: .bronze,
@@ -179,32 +184,32 @@ enum AchievementEngine {
         list.append(Achievement(id: "half", title: "Half Marathon", detail: "21.1 km walked in total",
                                 icon: "flag.fill", tier: .silver,
                                 progress: min(totalDistance / 21_097, 1),
-                                unlockedOn: cumulativeDate(walks: walks, target: 21_097)))
+                                unlockedOn: cumulativeDate(sorted: byDate, target: 21_097)))
 
         list.append(Achievement(id: "marathon", title: "Marathon", detail: "42.2 km walked in total",
                                 icon: "flag.checkered", tier: .gold,
                                 progress: min(totalDistance / 42_195, 1),
-                                unlockedOn: cumulativeDate(walks: walks, target: 42_195)))
+                                unlockedOn: cumulativeDate(sorted: byDate, target: 42_195)))
 
         list.append(Achievement(id: "century", title: "Century", detail: "100 km walked in total",
                                 icon: "crown.fill", tier: .gold,
                                 progress: min(totalDistance / 100_000, 1),
-                                unlockedOn: cumulativeDate(walks: walks, target: 100_000)))
+                                unlockedOn: cumulativeDate(sorted: byDate, target: 100_000)))
 
         list.append(Achievement(id: "week", title: "Week Warrior", detail: "Hit your goal 7 days running",
                                 icon: "calendar", tier: .bronze,
                                 progress: min(Double(best) / 7, 1),
-                                unlockedOn: best >= 7 ? Date() : nil))
+                                unlockedOn: best >= 7 ? lastGoalDay : nil))
 
         list.append(Achievement(id: "fortnight", title: "Fortnight", detail: "Hit your goal 14 days running",
                                 icon: "calendar.badge.checkmark", tier: .silver,
                                 progress: min(Double(best) / 14, 1),
-                                unlockedOn: best >= 14 ? Date() : nil))
+                                unlockedOn: best >= 14 ? lastGoalDay : nil))
 
         list.append(Achievement(id: "month", title: "Month Master", detail: "Hit your goal 30 days running",
                                 icon: "star.circle.fill", tier: .gold,
                                 progress: min(Double(best) / 30, 1),
-                                unlockedOn: best >= 30 ? Date() : nil))
+                                unlockedOn: best >= 30 ? lastGoalDay : nil))
 
         list.append(Achievement(id: "early", title: "Early Bird", detail: "Start a walk before 8am",
                                 icon: "sunrise.fill", tier: .bronze,
@@ -232,9 +237,9 @@ enum AchievementEngine {
     }
 
     /// When the running distance total first crossed `target`.
-    private static func cumulativeDate(walks: [Walk], target: Double) -> Date? {
+    private static func cumulativeDate(sorted: [Walk], target: Double) -> Date? {
         var running = 0.0
-        for walk in walks.sorted(by: { $0.start < $1.start }) {
+        for walk in sorted {
             running += walk.distanceMeters
             if running >= target { return walk.start }
         }

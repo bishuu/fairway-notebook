@@ -151,21 +151,23 @@ final class HealthKitService: ObservableObject {
     func startHeartRateUpdates(from start: Date, onUpdate: @escaping (Double) -> Void) {
         guard isAvailable else { return }
         stopHeartRateUpdates()
+        // Read everything isolated up front; the handlers below run on
+        // HealthKit's own queue and must touch nothing but these values.
+        let unit = heartRateUnit
         let predicate = HKQuery.predicateForSamples(withStart: start, end: nil, options: .strictStartDate)
-
-        func handle(_ samples: [HKSample]?) {
-            guard let latest = samples?.compactMap({ $0 as? HKQuantitySample })
-                .max(by: { $0.endDate < $1.endDate }) else { return }
-            let value = latest.quantity.doubleValue(for: self.heartRateUnit)
-            DispatchQueue.main.async { onUpdate(value) }
-        }
 
         let query = HKAnchoredObjectQuery(type: heartRateType, predicate: predicate,
                                           anchor: nil, limit: HKObjectQueryNoLimit) { _, samples, _, _, _ in
-            handle(samples)
+            guard let latest = samples?.compactMap({ $0 as? HKQuantitySample })
+                .max(by: { $0.endDate < $1.endDate }) else { return }
+            let value = latest.quantity.doubleValue(for: unit)
+            DispatchQueue.main.async { onUpdate(value) }
         }
         query.updateHandler = { _, samples, _, _, _ in
-            handle(samples)
+            guard let latest = samples?.compactMap({ $0 as? HKQuantitySample })
+                .max(by: { $0.endDate < $1.endDate }) else { return }
+            let value = latest.quantity.doubleValue(for: unit)
+            DispatchQueue.main.async { onUpdate(value) }
         }
         heartRateQuery = query
         store.execute(query)
@@ -179,14 +181,15 @@ final class HealthKitService: ObservableObject {
     /// Average and highest heart rate recorded across a finished walk.
     func heartRateSummary(from start: Date, to end: Date) async -> (average: Double, max: Double)? {
         guard isAvailable, end > start else { return nil }
+        let unit = heartRateUnit
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(quantityType: heartRateType,
                                           quantitySamplePredicate: predicate,
                                           options: [.discreteAverage, .discreteMax]) { _, statistics, _ in
                 guard let statistics,
-                      let average = statistics.averageQuantity()?.doubleValue(for: self.heartRateUnit),
-                      let maximum = statistics.maximumQuantity()?.doubleValue(for: self.heartRateUnit) else {
+                      let average = statistics.averageQuantity()?.doubleValue(for: unit),
+                      let maximum = statistics.maximumQuantity()?.doubleValue(for: unit) else {
                     continuation.resume(returning: nil)
                     return
                 }

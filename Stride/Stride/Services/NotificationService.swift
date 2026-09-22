@@ -25,8 +25,7 @@ final class NotificationService: ObservableObject {
 
     init() {
         nudgeEnabled = UserDefaults.standard.bool(forKey: Keys.enabled)
-        let storedHour = UserDefaults.standard.integer(forKey: Keys.hour)
-        nudgeHour = storedHour > 0 ? storedHour : 19
+        nudgeHour = UserDefaults.standard.object(forKey: Keys.hour) as? Int ?? 19
     }
 
     func refreshStatus() async {
@@ -65,7 +64,9 @@ final class NotificationService: ObservableObject {
         var components = DateComponents()
         components.hour = nudgeHour
         components.minute = 0
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        // Fires once. The app re-books it on every backgrounding, so the
+        // wording always reflects the latest step count.
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
     }
