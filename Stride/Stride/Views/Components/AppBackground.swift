@@ -1,39 +1,23 @@
 import SwiftUI
 
-/// Soft, slowly drifting gradient blobs behind every screen.
+/// Soft gradient glow behind every screen. Drawn with plain gradients (no
+/// blur filters or continuous animation) so scrolling over it stays smooth.
 @MainActor
 struct AppBackground: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var drift = false
 
     var body: some View {
         ZStack {
-            baseGradient.ignoresSafeArea()
+            baseGradient
 
-            Circle()
-                .fill(Theme.teal.opacity(colorScheme == .dark ? 0.45 : 0.30))
-                .frame(width: 360, height: 360)
-                .blur(radius: 90)
-                .offset(x: drift ? -120 : -40, y: drift ? -260 : -180)
-
-            Circle()
-                .fill(Theme.violet.opacity(colorScheme == .dark ? 0.40 : 0.22))
-                .frame(width: 320, height: 320)
-                .blur(radius: 90)
-                .offset(x: drift ? 150 : 90, y: drift ? 120 : 220)
-
-            Circle()
-                .fill(Theme.mint.opacity(colorScheme == .dark ? 0.28 : 0.20))
-                .frame(width: 260, height: 260)
-                .blur(radius: 80)
-                .offset(x: drift ? -80 : 40, y: drift ? 380 : 320)
+            RadialGradient(colors: [Theme.teal.opacity(colorScheme == .dark ? 0.42 : 0.28), .clear],
+                           center: UnitPoint(x: 0.12, y: 0.08), startRadius: 0, endRadius: 330)
+            RadialGradient(colors: [Theme.violet.opacity(colorScheme == .dark ? 0.36 : 0.20), .clear],
+                           center: UnitPoint(x: 0.92, y: 0.42), startRadius: 0, endRadius: 300)
+            RadialGradient(colors: [Theme.mint.opacity(colorScheme == .dark ? 0.26 : 0.18), .clear],
+                           center: UnitPoint(x: 0.28, y: 0.95), startRadius: 0, endRadius: 280)
         }
         .ignoresSafeArea()
-        .onAppear {
-            withAnimation(.easeInOut(duration: 9).repeatForever(autoreverses: true)) {
-                drift = true
-            }
-        }
         .allowsHitTesting(false)
     }
 

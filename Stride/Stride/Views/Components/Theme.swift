@@ -43,7 +43,7 @@ struct GlassCard<Content: View>: View {
                 RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
                     .strokeBorder(.white.opacity(0.18), lineWidth: 1)
             )
-            .shadow(color: .black.opacity(0.12), radius: 16, y: 8)
+            .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
     }
 }
 

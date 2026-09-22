@@ -5,58 +5,49 @@ import Combine
 /// A saved walk: the route on a map with an animated replay, plus its stats.
 @MainActor
 struct WalkDetailView: View {
-    var walkID: UUID
+    let walk: Walk
 
     @EnvironmentObject private var store: WalkStore
     @EnvironmentObject private var health: HealthKitService
     @Environment(\.dismiss) private var dismiss
 
-    @State private var track = RouteTrack(points: [])
-    @State private var progress: Double = 0
-    @State private var isReplaying = false
     @State private var showDeleteConfirm = false
     @State private var healthMessage: String?
 
-    private let replayDuration: Double = 9
-    private let ticker = Timer.publish(every: 1 / 30, on: .main, in: .common).autoconnect()
-
-    private var walk: Walk? { store.walk(with: walkID) }
+    /// The stored copy, so a later "Save to Apple Health" shows up here too.
+    private var current: Walk { store.walk(with: walk.id) ?? walk }
 
     var body: some View {
+        let item = current
         ZStack {
             AppBackground()
-            if let walk {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        if walk.hasRoute {
-                            mapCard(walk)
-                            replayControls
-                        } else {
-                            GlassCard {
-                                Label("No route was recorded for this walk (location was off or indoors).", systemImage: "map")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                            }
+            ScrollView {
+                VStack(spacing: 16) {
+                    if item.hasRoute {
+                        ReplayMapCard(walk: item)
+                    } else {
+                        GlassCard {
+                            Label("No route was recorded for this walk (location was off or indoors).", systemImage: "map")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
                         }
-                        statsGrid(walk)
-                        detailsCard(walk)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 30)
+                    statsGrid(item)
+                    detailsCard(item)
                 }
-            } else {
-                ContentUnavailableView("Walk not found", systemImage: "questionmark.circle")
+                .padding(.horizontal, 16)
+                .padding(.bottom, 30)
             }
         }
-        .navigationTitle(walk.map { Format.walkTitle($0.start) } ?? "Walk")
+        .navigationTitle(Format.walkTitle(item.start))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    if let walk, !walk.savedToHealth, health.canSaveWorkouts {
+                    if !item.savedToHealth, health.canSaveWorkouts {
                         Button {
-                            saveToHealth(walk)
+                            saveToHealth(item)
                         } label: {
                             Label("Save to Apple Health", systemImage: "heart")
                         }
@@ -73,7 +64,7 @@ struct WalkDetailView: View {
         }
         .confirmationDialog("Delete this walk?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
-                if let walk { store.delete(walk) }
+                store.delete(item)
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}
@@ -84,94 +75,6 @@ struct WalkDetailView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(healthMessage ?? "")
-        }
-        .onAppear {
-            if let walk { track = RouteTrack(points: walk.route) }
-        }
-        .onReceive(ticker) { _ in
-            guard isReplaying else { return }
-            progress += (1 / 30) / replayDuration
-            if progress >= 1 {
-                progress = 1
-                isReplaying = false
-            }
-        }
-    }
-
-    // MARK: - Map
-
-    private func mapCard(_ walk: Walk) -> some View {
-        let region = track.region ?? MKCoordinateRegion()
-        let trail = track.trail(to: progress)
-        let head = track.coordinate(at: progress)
-        let segments = walk.routeSegments
-        return Map(initialPosition: .region(region), interactionModes: [.pan, .zoom]) {
-            // Faint full route underneath.
-            ForEach(0..<segments.count, id: \.self) { index in
-                MapPolyline(coordinates: segments[index])
-                    .stroke(Theme.routeColor.opacity(0.28), lineWidth: 5)
-            }
-            // The part "walked" so far in the replay.
-            if trail.count > 1 {
-                MapPolyline(coordinates: trail)
-                    .stroke(Theme.routeGlow.opacity(0.45), lineWidth: 12)
-                MapPolyline(coordinates: trail)
-                    .stroke(Theme.routeColor, lineWidth: 5)
-            }
-            if let start = track.points.first {
-                Annotation("Start", coordinate: start, anchor: .center) { StartPin() }
-                    .annotationTitles(.hidden)
-            }
-            if let end = track.points.last {
-                Annotation("Finish", coordinate: end, anchor: .center) { EndPin() }
-                    .annotationTitles(.hidden)
-            }
-            if let head {
-                Annotation("Walker", coordinate: head, anchor: .center) {
-                    PulsingMarker(isMoving: isReplaying)
-                        .scaleEffect(0.8)
-                }
-                .annotationTitles(.hidden)
-            }
-        }
-        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
-        .frame(height: 340)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
-                .strokeBorder(.white.opacity(0.18), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.15), radius: 16, y: 8)
-    }
-
-    private var replayControls: some View {
-        GlassCard(padding: 14) {
-            HStack(spacing: 14) {
-                Button {
-                    if isReplaying {
-                        isReplaying = false
-                    } else {
-                        if progress >= 1 { progress = 0 }
-                        isReplaying = true
-                    }
-                } label: {
-                    Image(systemName: isReplaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .frame(width: 46, height: 46)
-                        .background(Theme.buttonGradient, in: Circle())
-                        .foregroundStyle(.black.opacity(0.85))
-                }
-                .buttonStyle(PressableStyle())
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(isReplaying ? "Replaying your walk…" : (progress >= 1 ? "Replay finished" : "Replay this walk"))
-                        .font(.subheadline.weight(.semibold))
-                    Slider(value: $progress, in: 0...1) { editing in
-                        if editing { isReplaying = false }
-                    }
-                    .tint(Theme.teal)
-                }
-            }
         }
     }
 
@@ -218,6 +121,117 @@ struct WalkDetailView: View {
                 healthMessage = "Saved to Apple Health."
             } catch {
                 healthMessage = error.localizedDescription
+            }
+        }
+    }
+}
+
+/// The route map with the replay animation. Kept as its own view so only
+/// this part redraws while the replay is running.
+@MainActor
+struct ReplayMapCard: View {
+    private let walk: Walk
+    private let track: RouteTrack
+    private let region: MKCoordinateRegion
+    private let replayDuration: Double = 9
+    private let ticker = Timer.publish(every: 1 / 30, on: .main, in: .common).autoconnect()
+
+    @State private var progress: Double = 0
+    @State private var isReplaying = false
+
+    init(walk: Walk) {
+        self.walk = walk
+        let track = RouteTrack(points: walk.route)
+        self.track = track
+        region = track.region ?? MKCoordinateRegion()
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            map
+            controls
+        }
+        .onReceive(ticker) { _ in
+            guard isReplaying else { return }
+            progress += (1 / 30) / replayDuration
+            if progress >= 1 {
+                progress = 1
+                isReplaying = false
+            }
+        }
+    }
+
+    private var map: some View {
+        // The trail polyline only changes in coarse steps (cheap); the marker moves every frame.
+        let trailFraction = (progress * 150).rounded(.down) / 150
+        let trail = track.trail(to: trailFraction)
+        let head = track.coordinate(at: progress)
+        let segments = walk.routeSegments
+        return Map(initialPosition: .region(region), interactionModes: [.pan, .zoom]) {
+            // Faint full route underneath.
+            ForEach(0..<segments.count, id: \.self) { index in
+                MapPolyline(coordinates: segments[index])
+                    .stroke(Theme.routeColor.opacity(0.28), lineWidth: 5)
+            }
+            // The part "walked" so far in the replay.
+            if trail.count > 1 {
+                MapPolyline(coordinates: trail)
+                    .stroke(Theme.routeGlow.opacity(0.45), lineWidth: 12)
+                MapPolyline(coordinates: trail)
+                    .stroke(Theme.routeColor, lineWidth: 5)
+            }
+            if let start = track.points.first {
+                Annotation("Start", coordinate: start, anchor: .center) { StartPin() }
+                    .annotationTitles(.hidden)
+            }
+            if let end = track.points.last {
+                Annotation("Finish", coordinate: end, anchor: .center) { EndPin() }
+                    .annotationTitles(.hidden)
+            }
+            if let head {
+                Annotation("Walker", coordinate: head, anchor: .center) {
+                    PulsingMarker(isMoving: isReplaying)
+                        .scaleEffect(0.8)
+                }
+                .annotationTitles(.hidden)
+            }
+        }
+        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+        .frame(height: 340)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
+                .strokeBorder(.white.opacity(0.18), lineWidth: 1)
+        )
+    }
+
+    private var controls: some View {
+        GlassCard(padding: 14) {
+            HStack(spacing: 14) {
+                Button {
+                    if isReplaying {
+                        isReplaying = false
+                    } else {
+                        if progress >= 1 { progress = 0 }
+                        isReplaying = true
+                    }
+                } label: {
+                    Image(systemName: isReplaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .frame(width: 46, height: 46)
+                        .background(Theme.buttonGradient, in: Circle())
+                        .foregroundStyle(.black.opacity(0.85))
+                }
+                .buttonStyle(PressableStyle())
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(isReplaying ? "Replaying your walk…" : (progress >= 1 ? "Replay finished" : "Replay this walk"))
+                        .font(.subheadline.weight(.semibold))
+                    Slider(value: $progress, in: 0...1) { editing in
+                        if editing { isReplaying = false }
+                    }
+                    .tint(Theme.teal)
+                }
             }
         }
     }

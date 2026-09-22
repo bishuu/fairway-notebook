@@ -159,7 +159,6 @@ struct TodayView: View {
             HStack(spacing: 12) {
                 Image(systemName: "figure.walk.motion")
                     .font(.system(size: 22, weight: .bold))
-                    .symbolEffect(.pulse)
                 Text("Start a Walk")
                     .font(.title3.weight(.bold))
                 Spacer()
@@ -171,7 +170,7 @@ struct TodayView: View {
             .frame(maxWidth: .infinity)
             .background(Theme.buttonGradient, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             .foregroundStyle(.black.opacity(0.85))
-            .shadow(color: Theme.mint.opacity(0.45), radius: 18, y: 10)
+            .shadow(color: Theme.mint.opacity(0.35), radius: 10, y: 6)
         }
         .buttonStyle(PressableStyle())
     }

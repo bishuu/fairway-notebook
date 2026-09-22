@@ -45,7 +45,7 @@ struct HistoryView: View {
             .navigationTitle("History")
             .toolbarBackground(.hidden, for: .navigationBar)
             .navigationDestination(for: Walk.self) { walk in
-                WalkDetailView(walkID: walk.id)
+                WalkDetailView(walk: walk)
             }
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: mode)
