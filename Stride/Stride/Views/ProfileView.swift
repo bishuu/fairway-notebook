@@ -1,15 +1,21 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
-/// Body inputs, daily goal, Apple Health connection and permissions.
+/// Body inputs, goal, units, Apple Health, reminders, permissions and backup.
 @MainActor
 struct ProfileView: View {
     @EnvironmentObject private var profile: UserProfile
     @EnvironmentObject private var health: HealthKitService
     @EnvironmentObject private var today: TodayModel
     @EnvironmentObject private var session: WalkSession
+    @EnvironmentObject private var store: WalkStore
+    @EnvironmentObject private var notifications: NotificationService
 
-    @State private var importMessage: String?
+    @State private var message: String?
     @State private var isImporting = false
+    @State private var showExporter = false
+    @State private var showImporter = false
+    @State private var backupDocument: BackupDocument?
 
     var body: some View {
         NavigationStack {
@@ -19,7 +25,10 @@ struct ProfileView: View {
                     VStack(spacing: 16) {
                         bodyCard
                         goalCard
+                        unitsCard
                         healthCard
+                        remindersCard
+                        backupCard
                         permissionsCard
                         aboutCard
                     }
@@ -31,11 +40,36 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .toolbarBackground(.hidden, for: .navigationBar)
         }
-        .alert("Apple Health", isPresented: Binding(get: { importMessage != nil }, set: { if !$0 { importMessage = nil } })) {
+        .alert("Stride", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(importMessage ?? "")
+            Text(message ?? "")
         }
+        .fileExporter(isPresented: $showExporter,
+                      document: backupDocument,
+                      contentType: .json,
+                      defaultFilename: BackupService.suggestedName) { result in
+            switch result {
+            case .success: message = "Backup saved. Pick iCloud Drive to reach it from another phone."
+            case .failure(let error): message = error.localizedDescription
+            }
+        }
+        .fileImporter(isPresented: $showImporter, allowedContentTypes: [.json]) { result in
+            switch result {
+            case .success(let url):
+                do {
+                    let added = try BackupService.restore(from: url, store: store, profile: profile)
+                    message = added == 0
+                        ? "Settings restored. No new walks to add."
+                        : "Restored \(added) walk\(added == 1 ? "" : "s") and your settings."
+                } catch {
+                    message = "That file could not be read as a Stride backup."
+                }
+            case .failure(let error):
+                message = error.localizedDescription
+            }
+        }
+        .task { await notifications.refreshStatus() }
     }
 
     // MARK: - Cards
@@ -99,6 +133,24 @@ struct ProfileView: View {
                 set: { profile.dailyGoal = Int(($0 / 500).rounded()) * 500 })
     }
 
+    private var unitsCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Units", systemImage: "ruler")
+                    .font(.headline)
+                Picker("Units", selection: $profile.units) {
+                    ForEach(Units.allCases) { unit in
+                        Text(unit.label).tag(unit)
+                    }
+                }
+                .pickerStyle(.segmented)
+                Text("Changes distance, pace, speed, climbing and weight everywhere in the app.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private var healthCard: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 12) {
@@ -115,7 +167,7 @@ struct ProfileView: View {
                         Text(statusText)
                             .font(.subheadline.weight(.semibold))
                     }
-                    Text("Stride reads your steps so the total matches the Health app (including an Apple Watch), and saves each walk as a walking workout with its route.")
+                    Text("Stride reads your steps so the total matches the Health app (including an Apple Watch), reads heart rate during walks, and saves each walk as a walking workout with its route.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     if health.hasRequestedAccess {
@@ -149,13 +201,108 @@ struct ProfileView: View {
         return "Not connected"
     }
 
+    private var remindersCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("Evening nudge", systemImage: "bell.badge")
+                    .font(.headline)
+                Toggle(isOn: nudgeBinding) {
+                    Text("Remind me if I'm short of my goal")
+                        .font(.subheadline)
+                }
+                .tint(Theme.teal)
+
+                if notifications.nudgeEnabled {
+                    HStack {
+                        Text("Time").font(.subheadline)
+                        Spacer()
+                        Picker("Hour", selection: $notifications.nudgeHour) {
+                            ForEach(15...22, id: \.self) { hour in
+                                Text(hourLabel(hour)).tag(hour)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(Theme.teal)
+                    }
+                    Text("The reminder tells you how many steps are left, using the count from when you last closed the app.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private var nudgeBinding: Binding<Bool> {
+        Binding(get: { notifications.nudgeEnabled }, set: { wanted in
+            guard wanted else {
+                notifications.nudgeEnabled = false
+                return
+            }
+            Task {
+                let granted = notifications.authorized || await notifications.requestAuthorization()
+                notifications.nudgeEnabled = granted
+                if granted {
+                    notifications.scheduleNudge(steps: today.steps, goal: profile.dailyGoal)
+                } else {
+                    message = "Turn on notifications for Stride in Settings to get the evening nudge."
+                }
+            }
+        })
+    }
+
+    private func hourLabel(_ hour: Int) -> String {
+        var components = DateComponents()
+        components.hour = hour
+        let date = Calendar.current.date(from: components) ?? Date()
+        return date.formatted(date: .omitted, time: .shortened)
+    }
+
+    private var backupCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("Backup", systemImage: "icloud.and.arrow.up")
+                    .font(.headline)
+                Text("Saves your walks and settings to a single file. Choose iCloud Drive and you can restore it on another iPhone.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                HStack(spacing: 10) {
+                    Button {
+                        backupDocument = BackupService.makeDocument(store: store, profile: profile)
+                        showExporter = backupDocument != nil
+                    } label: {
+                        Label("Back up", systemImage: "square.and.arrow.up")
+                            .font(.subheadline.weight(.bold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Theme.teal)
+
+                    Button {
+                        showImporter = true
+                    } label: {
+                        Label("Restore", systemImage: "square.and.arrow.down")
+                            .font(.subheadline.weight(.bold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(Theme.teal)
+                }
+            }
+        }
+    }
+
     private var permissionsCard: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 12) {
                 Label("Permissions", systemImage: "checkmark.shield")
                     .font(.headline)
                 permissionRow(title: "Motion & Fitness", ok: !today.motionDenied, detail: today.motionDenied ? "Off" : "On")
-                permissionRow(title: "Location", ok: !session.locationDenied, detail: session.locationDenied ? "Off" : (session.location.isAuthorized ? "On" : "Asked when you start a walk"))
+                permissionRow(title: "Location", ok: !session.locationDenied,
+                              detail: session.locationDenied ? "Off" : (session.location.isAuthorized ? "On" : "Asked when you start a walk"))
+                permissionRow(title: "Notifications", ok: notifications.authorized,
+                              detail: notifications.authorized ? "On" : "Off")
                 Button("Open Settings") { openSettings() }
                     .font(.subheadline.weight(.semibold))
                     .buttonStyle(.bordered)
@@ -182,6 +329,12 @@ struct ProfileView: View {
                 Text("Stride multiplies a walking intensity value (a MET, from the Compendium of Physical Activities, chosen by your pace) by your weight and the time you walked. Numbers are estimates, not medical measurements.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if !AppGroup.isShared {
+                    Divider()
+                    Text("Widgets can't read your steps on this build. That needs the App Groups capability, which a paid Apple Developer account provides.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -209,7 +362,7 @@ struct ProfileView: View {
                 imported.append("sex")
             }
             isImporting = false
-            importMessage = imported.isEmpty
+            message = imported.isEmpty
                 ? "No weight, height or sex found in Apple Health. Add them in the Health app, or make sure Stride is allowed to read them."
                 : "Imported \(imported.joined(separator: ", ")) from Apple Health."
         }
@@ -235,7 +388,8 @@ struct BodyInputsForm: View {
                     .buttonStyle(.bordered)
                     .tint(Theme.teal)
 
-                    TextField("lb", value: $profile.weightLb, format: FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1)))
+                    TextField(profile.units.weightSuffix, value: weightBinding,
+                              format: FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1)))
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.center)
                         .font(.headline.monospacedDigit())
@@ -250,7 +404,7 @@ struct BodyInputsForm: View {
                     .buttonStyle(.bordered)
                     .tint(Theme.teal)
                 }
-                Text("lb")
+                Text(profile.units.weightSuffix)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
             }
@@ -295,7 +449,15 @@ struct BodyInputsForm: View {
         }
     }
 
+    private var weightBinding: Binding<Double> {
+        Binding(get: { profile.displayWeight },
+                set: { profile.displayWeight = $0 })
+    }
+
     private func adjustWeight(by delta: Double) {
-        profile.weightLb = min(max((profile.weightLb + delta).rounded(), 50), 700)
+        let next = (profile.displayWeight + delta).rounded()
+        let lower = profile.units == .metric ? 23.0 : 50.0
+        let upper = profile.units == .metric ? 320.0 : 700.0
+        profile.displayWeight = min(max(next, lower), upper)
     }
 }

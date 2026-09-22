@@ -1,7 +1,10 @@
 import Foundation
 
 /// Small formatting helpers so every screen shows numbers the same way.
+/// Distances and speeds follow the unit chosen in Profile.
 enum Format {
+    static var units: Units { AppGroup.units }
+
     static func steps(_ value: Int) -> String {
         value.formatted(.number.grouping(.automatic))
     }
@@ -10,13 +13,20 @@ enum Format {
         Int(value.rounded()).formatted(.number.grouping(.automatic))
     }
 
-    static func miles(_ meters: Double, digits: Int = 2) -> String {
-        let miles = meters / 1609.344
-        return miles.formatted(.number.precision(.fractionLength(digits)))
+    /// Distance as a bare number in the chosen unit.
+    static func distanceValue(_ meters: Double, digits: Int = 2) -> String {
+        let value = meters / units.metersPerUnit
+        return value.formatted(.number.precision(.fractionLength(digits)))
     }
 
-    static func distance(_ meters: Double) -> String {
-        "\(miles(meters)) mi"
+    /// Distance with its unit, e.g. "2.41 mi".
+    static func distance(_ meters: Double, digits: Int = 2) -> String {
+        "\(distanceValue(meters, digits: digits)) \(units.distanceSuffix)"
+    }
+
+    static func elevation(_ meters: Double) -> String {
+        let value = meters / units.metersPerElevationUnit
+        return "\(Int(value.rounded())) \(units.elevationSuffix)"
     }
 
     static func duration(_ seconds: TimeInterval) -> String {
@@ -39,16 +49,24 @@ enum Format {
         return "\(total) sec"
     }
 
-    /// Pace as minutes and seconds per mile, e.g. "17'30\"".
-    static func pace(secondsPerMile: Double?) -> String {
-        guard let secondsPerMile, secondsPerMile.isFinite, secondsPerMile > 0, secondsPerMile < 3600 else { return "--'--\"" }
-        let minutes = Int(secondsPerMile) / 60
-        let seconds = Int(secondsPerMile) % 60
+    /// Pace in minutes and seconds per mile or kilometre, e.g. "17'30\"".
+    static func pace(secondsPerMeter: Double?) -> String {
+        guard let secondsPerMeter, secondsPerMeter.isFinite, secondsPerMeter > 0 else { return "--'--\"" }
+        let perUnit = secondsPerMeter * units.metersPerUnit
+        guard perUnit > 0, perUnit < 5400 else { return "--'--\"" }
+        let minutes = Int(perUnit) / 60
+        let seconds = Int(perUnit) % 60
         return String(format: "%d'%02d\"", minutes, seconds)
     }
 
-    static func speedMph(metersPerSecond: Double) -> String {
-        (metersPerSecond * 2.2369363).formatted(.number.precision(.fractionLength(1))) + " mph"
+    static func speed(metersPerSecond: Double) -> String {
+        let value = metersPerSecond / units.metersPerUnit * 3600
+        return value.formatted(.number.precision(.fractionLength(1))) + " " + units.speedSuffix
+    }
+
+    static func heartRate(_ bpm: Double?) -> String {
+        guard let bpm, bpm > 0 else { return "--" }
+        return "\(Int(bpm.rounded()))"
     }
 
     static func dayName(_ date: Date) -> String {
@@ -75,5 +93,13 @@ enum Format {
             return "Yesterday, " + date.formatted(date: .omitted, time: .shortened)
         }
         return date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day().hour().minute())
+    }
+
+    /// Weight shown in the chosen unit (stored canonically in pounds).
+    static func weight(fromPounds pounds: Double) -> String {
+        if units == .metric {
+            return (pounds * 0.45359237).formatted(.number.precision(.fractionLength(1))) + " kg"
+        }
+        return pounds.formatted(.number.precision(.fractionLength(0))) + " lb"
     }
 }

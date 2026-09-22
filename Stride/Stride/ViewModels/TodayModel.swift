@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import WidgetKit
 
 /// Live step count for today, blending the phone's motion chip (instant)
 /// with Apple Health (the number the Health app shows, including a watch).
@@ -12,6 +13,7 @@ final class TodayModel: ObservableObject {
     @Published private(set) var motionDenied = false
     @Published private(set) var pedometerUnavailable = false
     @Published private(set) var lastRefresh: Date?
+    @Published private(set) var streakDays: Int = 0
 
     private let pedometer: PedometerService
     private let health: HealthKitService
@@ -45,6 +47,19 @@ final class TodayModel: ObservableObject {
     var weeklyAverage: Int {
         guard !weeklySteps.isEmpty else { return 0 }
         return weeklySteps.reduce(0) { $0 + $1.steps } / weeklySteps.count
+    }
+
+    /// Hands today's numbers to the widgets and asks them to redraw.
+    func publishSnapshot(walkActive: Bool = false) {
+        let snapshot = StrideSnapshot(steps: steps,
+                                      goal: profile.dailyGoal,
+                                      distanceMeters: distanceMeters,
+                                      calories: calories,
+                                      streakDays: streakDays,
+                                      walkActive: walkActive,
+                                      updated: Date())
+        AppGroup.save(snapshot)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Begins live updates. Safe to call more than once.
@@ -120,7 +135,9 @@ final class TodayModel: ObservableObject {
         }
         recompute()
         await refreshHistory()
+        streakDays = AchievementEngine.streak(days: monthlySteps, goal: profile.dailyGoal)
         lastRefresh = now
+        publishSnapshot()
     }
 
     private func resetForNewDay() {

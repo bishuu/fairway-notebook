@@ -22,6 +22,21 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.bishuu.stride</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>stride</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Stride reads your step count, walking distance, weight, height and sex from Apple Health so the app shows the same numbers as the Health app and can prefill your profile.</string>
 	<key>NSHealthUpdateUsageDescription</key>

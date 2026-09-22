@@ -1,8 +1,10 @@
 import Foundation
 import Combine
 import CoreLocation
+import WidgetKit
 
-/// Runs one walk workout: timer, live steps, GPS route, distance and calories.
+/// Runs one walk workout: timer, live steps, GPS route, distance, calories,
+/// climbing, heart rate, and the Live Activity on the Lock Screen.
 @MainActor
 final class WalkSession: ObservableObject {
     enum State: Equatable {
@@ -14,9 +16,11 @@ final class WalkSession: ObservableObject {
     @Published private(set) var steps: Int = 0
     @Published private(set) var distanceMeters: Double = 0
     @Published private(set) var calories: Double = 0
+    @Published private(set) var elevationGainMeters: Double = 0
+    @Published private(set) var heartRate: Double?
     @Published private(set) var route: [RoutePoint] = []
     @Published private(set) var currentLocation: CLLocation?
-    @Published private(set) var currentPaceSecondsPerMile: Double?
+    @Published private(set) var currentPaceSecondsPerMeter: Double?
     @Published private(set) var locationDenied = false
     @Published private(set) var gpsAccuracy: Double?
     @Published private(set) var startDate: Date?
@@ -28,6 +32,8 @@ final class WalkSession: ObservableObject {
     private let health: HealthKitService
     private let profile: UserProfile
     private let store: WalkStore
+    private let altimeter = AltimeterService()
+    private let liveActivity = LiveActivityController()
 
     private var segmentStart: Date?
     private var accumulatedElapsed: TimeInterval = 0
@@ -41,6 +47,7 @@ final class WalkSession: ObservableObject {
     private var endDate: Date?
     private var pauseStartedAt: Date?
     private var pauses: [DateInterval] = []
+    private var lastActivityPush = Date.distantPast
 
     init(location: LocationService, pedometer: PedometerService, health: HealthKitService,
          profile: UserProfile, store: WalkStore) {
@@ -79,9 +86,9 @@ final class WalkSession: ObservableObject {
         return segments
     }
 
-    var averagePaceSecondsPerMile: Double? {
+    var averagePaceSecondsPerMeter: Double? {
         guard distanceMeters > 30, elapsed > 0 else { return nil }
-        return elapsed / (distanceMeters / 1609.344)
+        return elapsed / distanceMeters
     }
 
     // MARK: - Controls
@@ -96,6 +103,13 @@ final class WalkSession: ObservableObject {
         healthSaveError = nil
         lastSavedWalk = nil
         beginSegment(at: now)
+        altimeter.start { [weak self] gain in
+            self?.elevationGainMeters = gain
+        }
+        health.startHeartRateUpdates(from: now) { [weak self] bpm in
+            self?.heartRate = bpm
+        }
+        liveActivity.start(startedAt: now)
         ticker = Timer.publish(every: 0.5, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in self?.tick() }
@@ -110,9 +124,11 @@ final class WalkSession: ObservableObject {
         segmentPedometerDistance = 0
         pedometer.stopLiveUpdates()
         location.stopTracking()
+        altimeter.pause()
         pauseStartedAt = Date()
         state = .paused
         tick()
+        pushActivity(force: true)
     }
 
     func resume() {
@@ -127,6 +143,10 @@ final class WalkSession: ObservableObject {
         lastAcceptedLocation = nil
         state = .active
         beginSegment(at: now)
+        altimeter.resume { [weak self] gain in
+            self?.elevationGainMeters = gain
+        }
+        pushActivity(force: true)
     }
 
     /// Stops the sensors and freezes the numbers so they can be reviewed.
@@ -144,26 +164,35 @@ final class WalkSession: ObservableObject {
         pauseStartedAt = nil
         pedometer.stopLiveUpdates()
         location.stopTracking()
+        altimeter.stop()
+        health.stopHeartRateUpdates()
         ticker = nil
         state = .finished
         tick()
+        liveActivity.end(steps: steps, distanceMeters: distanceMeters,
+                         calories: calories, elapsed: elapsed)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Saves the finished walk to history and to Apple Health.
     func save() {
         guard state == .finished, let startDate else { return }
+        let end = endDate ?? Date()
         let walk = Walk(start: startDate,
-                        end: endDate ?? Date(),
+                        end: end,
                         activeSeconds: accumulatedElapsed,
                         steps: steps,
                         distanceMeters: distanceMeters,
                         calories: calories,
                         route: route,
-                        pauses: pauses)
+                        pauses: pauses,
+                        elevationGainMeters: elevationGainMeters)
         store.add(walk)
         lastSavedWalk = walk
         state = .idle
+        attachHeartRate(to: walk, start: startDate, end: end)
         saveToHealth(walk)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func discard() {
@@ -172,15 +201,28 @@ final class WalkSession: ObservableObject {
         resetCounters()
     }
 
+    /// Fills in average and peak heart rate once Health has the samples.
+    private func attachHeartRate(to walk: Walk, start: Date, end: Date) {
+        guard health.isAvailable, health.hasRequestedAccess else { return }
+        Task {
+            guard let summary = await health.heartRateSummary(from: start, to: end) else { return }
+            guard var stored = store.walk(with: walk.id) else { return }
+            stored.averageHeartRate = summary.average
+            stored.maxHeartRate = summary.max
+            store.update(stored)
+            if lastSavedWalk?.id == stored.id { lastSavedWalk = stored }
+        }
+    }
+
     private func saveToHealth(_ walk: Walk) {
         guard health.isAvailable, health.hasRequestedAccess else { return }
         Task {
             do {
                 try await health.saveWorkout(walk)
-                var saved = walk
-                saved.savedToHealth = true
-                store.update(saved)
-                lastSavedWalk = saved
+                guard var stored = store.walk(with: walk.id) else { return }
+                stored.savedToHealth = true
+                store.update(stored)
+                if lastSavedWalk?.id == stored.id { lastSavedWalk = stored }
             } catch {
                 healthSaveError = error.localizedDescription
             }
@@ -194,8 +236,10 @@ final class WalkSession: ObservableObject {
         steps = 0
         distanceMeters = 0
         calories = 0
+        elevationGainMeters = 0
+        heartRate = nil
         route = []
-        currentPaceSecondsPerMile = nil
+        currentPaceSecondsPerMeter = nil
         gpsAccuracy = nil
         accumulatedElapsed = 0
         segmentIndex = 0
@@ -216,7 +260,7 @@ final class WalkSession: ObservableObject {
             self.steps = self.stepsBeforeSegment + reading.steps
             self.segmentPedometerDistance = reading.distanceMeters ?? self.segmentPedometerDistance
             if let pace = reading.paceSecondsPerMeter, pace > 0 {
-                self.currentPaceSecondsPerMile = pace * 1609.344
+                self.currentPaceSecondsPerMeter = pace
             }
             self.recomputeDerived()
         }
@@ -229,6 +273,19 @@ final class WalkSession: ObservableObject {
         }
         elapsed = total
         recomputeDerived()
+        pushActivity(force: false)
+    }
+
+    /// The Live Activity is refreshed a couple of times a minute; the timer on
+    /// the card runs on its own in between.
+    private func pushActivity(force: Bool) {
+        guard isRunning else { return }
+        let now = Date()
+        guard force || now.timeIntervalSince(lastActivityPush) >= 20 else { return }
+        lastActivityPush = now
+        liveActivity.update(steps: steps, distanceMeters: distanceMeters,
+                            calories: calories, elapsed: elapsed,
+                            isPaused: state == .paused)
     }
 
     private func handle(_ fix: CLLocation) {

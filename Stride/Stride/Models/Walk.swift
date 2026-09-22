@@ -45,16 +45,20 @@ struct Walk: Codable, Identifiable, Hashable {
     var route: [RoutePoint]
     /// Times the walk was paused, so Apple Health can exclude them.
     var pauses: [DateInterval] = []
+    /// Metres climbed, from the phone's barometer.
+    var elevationGainMeters: Double = 0
+    var averageHeartRate: Double?
+    var maxHeartRate: Double?
     var savedToHealth: Bool = false
 
     var averageSpeedMetersPerSecond: Double {
         activeSeconds > 0 ? distanceMeters / activeSeconds : 0
     }
 
-    /// Seconds per mile, or nil when there is not enough data.
-    var paceSecondsPerMile: Double? {
+    /// Seconds per metre, or nil when there is not enough data.
+    var paceSecondsPerMeter: Double? {
         guard distanceMeters > 50, activeSeconds > 0 else { return nil }
-        return activeSeconds / (distanceMeters / 1609.344)
+        return activeSeconds / distanceMeters
     }
 
     var hasRoute: Bool { route.count > 1 }
@@ -78,7 +82,7 @@ struct Walk: Codable, Identifiable, Hashable {
 }
 
 /// Steps taken on one calendar day (used for the history chart).
-struct DailySteps: Identifiable, Hashable {
+struct DailySteps: Identifiable, Hashable, Codable {
     var date: Date
     var steps: Int
     var id: Date { date }

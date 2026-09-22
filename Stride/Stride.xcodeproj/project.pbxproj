@@ -7,62 +7,116 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		76E124CB19A3CC49C392B799 /* StrideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A0EE49227F53B6A1F1444 /* StrideApp.swift */; };
-		1A3C9AF8458B8AE328B529F8 /* CalorieEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA624F0C32BEB22F50D202B /* CalorieEstimator.swift */; };
-		0EFA671C45FAF5097D4A3106 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A978A2662EF1621CAABF15 /* Format.swift */; };
-		90A4AD6B0AECFB603663E36F /* RouteTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FA7A8DE980E1F58E9B8C0F /* RouteTrack.swift */; };
-		428E9D55A58B25588ECAA822 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2076B4A04421BB47F118404 /* UserProfile.swift */; };
-		786600AC89CE653F8CDE7667 /* Walk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4080CF204E834DA15DCEA /* Walk.swift */; };
-		7610C5C98E5BD52EA85F6135 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D30AD63DC62999230BB3B3 /* HealthKitService.swift */; };
-		71365948EFC7D026271D7DD3 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F130ED70CDC3EA6B71B45D /* LocationService.swift */; };
-		F1BF2F1AA929DA5BEC7FD7B8 /* PedometerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EDCA951E51AA41288B1FC7 /* PedometerService.swift */; };
-		7ACE6146F0A3C01C37751393 /* WalkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB4FA9E3241AE7C7B1AF05B /* WalkStore.swift */; };
-		CF89808B8C8FF088D55E59D0 /* TodayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AB6C4E38E9A44E725A0836 /* TodayModel.swift */; };
-		934EA668E938120ABA345B29 /* WalkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586596C04125F061D90FDF99 /* WalkSession.swift */; };
-		01D40406DFB638C12B1BC937 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1925E8E16292C3DE541DAEDE /* HistoryView.swift */; };
-		0EE19AEF2FE5ED495EC2B81D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1469BFF3B3AA822BDB255ED4 /* OnboardingView.swift */; };
-		FC6AAEB51CFFEE563D1A5C92 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A61AEA27814A83F034EBD1 /* ProfileView.swift */; };
-		D5E30128C131D1FB2E384D60 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938BE3EE37B2BDF3383FAFD /* RootView.swift */; };
-		7FEBA0DBC23CF870B2AD5E9A /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DD41935B3F9D134A25BA7B /* TodayView.swift */; };
-		43B064819C8E1FF00EC3F353 /* WalkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE886BDE04D31F4039A6C98 /* WalkDetailView.swift */; };
-		29D9D069BD810F281F9C05F6 /* WalkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB8D914403F86197C536050 /* WalkSummaryView.swift */; };
-		690D685F90624421C7FAE427 /* WalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E71D7B9D8BFE47E1ED740 /* WalkView.swift */; };
-		DDA2E2A2AB4C8B00BA101F1B /* AppBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DF788244EA471893F83E677 /* AppBackground.swift */; };
-		A56949155E56DE4A50C0EBBE /* ConfettiBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A939CB14C62B80083AD99 /* ConfettiBurst.swift */; };
-		6DF20FA56DCEE0F3B3112EFF /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F491CFDFA6A159359AB19CA8 /* ProgressRing.swift */; };
-		FF92138F8AB1C2D72DC38843 /* PulsingMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6678D34B3C0C24BDCFFAA43 /* PulsingMarker.swift */; };
-		8A074169FBAD48AA177CA7FF /* RoutePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1176828828C05DDAD17FB /* RoutePreview.swift */; };
-		1AD6D4CC51416E8FE7F18B04 /* StatTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E7BB97D6A89CED0768A264 /* StatTile.swift */; };
-		9A6DA4E475C30C7BF3A82B1A /* StepsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136B8A0CF889019688C8C2BD /* StepsChart.swift */; };
-		AD8BF2B12B68E70ECC2B9A8E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234A60582AA49F79A20073D /* Theme.swift */; };
-		22A46C9CE9DD37651C9EA68A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1749AA7D2B1864A38435323 /* Assets.xcassets */; };
+		C32C989B4947C93A520BD81D /* StrideShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8FA03CC54D78BC0CC2121A /* StrideShortcuts.swift */; };
+		2B22EF54E21AA430325A6214 /* Achievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649AADEBC3E69EC395F55B1E /* Achievements.swift */; };
+		7F6526402CBF9D4BEDC148A9 /* CalorieEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA624F0C32BEB22F50D202B /* CalorieEstimator.swift */; };
+		E724BCD9617115A4E9DD82BE /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A978A2662EF1621CAABF15 /* Format.swift */; };
+		FEB617AF1043169AF9DA9B1B /* RouteTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FA7A8DE980E1F58E9B8C0F /* RouteTrack.swift */; };
+		FD23F8814ED2BA1B68DC7AC4 /* Trends.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43262493454CA032B61C057 /* Trends.swift */; };
+		AD4EAAFB6C09D8FB401CDFAB /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2076B4A04421BB47F118404 /* UserProfile.swift */; };
+		8C8A48BE66534AB35128B3F4 /* Walk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4080CF204E834DA15DCEA /* Walk.swift */; };
+		F81C68020854F91AAABB04EB /* AltimeterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0B5B172AFCC6B646AA250E /* AltimeterService.swift */; };
+		0190BB4B3674BAC292FAF2F2 /* BackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DA69DEC179180CECC87C1A /* BackupService.swift */; };
+		03A2419A0D15FE4ECF73C28A /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D30AD63DC62999230BB3B3 /* HealthKitService.swift */; };
+		5ECFCBA40692100B76D814A5 /* LiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15AF7F5B72CCCD29986DB17 /* LiveActivityController.swift */; };
+		0492639DFB593F89E08F8B7F /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F130ED70CDC3EA6B71B45D /* LocationService.swift */; };
+		8206B4121F72AF1883F5D3F6 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9941D221F6B016D1E2A8A607 /* NotificationService.swift */; };
+		68230B5D822A64BA23F90DE2 /* PedometerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EDCA951E51AA41288B1FC7 /* PedometerService.swift */; };
+		F4A54B59D7363CB4478238B1 /* WalkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB4FA9E3241AE7C7B1AF05B /* WalkStore.swift */; };
+		AA325BC8FC8EF3B0744FA7FA /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CCE0F396776A8B74FD6011F /* AppGroup.swift */; };
+		25FE1DC3BC9348C34CCDFA0F /* StrideIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848334C11F9688B064F1D6F5 /* StrideIntents.swift */; };
+		6503D14F376414B7A5F6178B /* StrideSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4F33440CD27602B53B1902 /* StrideSnapshot.swift */; };
+		D819AC5FB792A9A8399BA499 /* WalkActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14571C02DF07B9403402F804 /* WalkActivityAttributes.swift */; };
+		4C426399014F65AE41098D1D /* StrideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A0EE49227F53B6A1F1444 /* StrideApp.swift */; };
+		B8ABB318DDF215F5547A722D /* TodayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AB6C4E38E9A44E725A0836 /* TodayModel.swift */; };
+		99028D53C0AF380F760CBCFB /* WalkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586596C04125F061D90FDF99 /* WalkSession.swift */; };
+		01BD7EDC9863BFEF957E3B8A /* AwardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1746C1807F8C48C163907D1 /* AwardsView.swift */; };
+		F308C8655553FE75E4D6FE2D /* AppBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DF788244EA471893F83E677 /* AppBackground.swift */; };
+		360A098EA900191D1ADD617B /* ConfettiBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A939CB14C62B80083AD99 /* ConfettiBurst.swift */; };
+		58AB608AA3C99BF012C7FECE /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F491CFDFA6A159359AB19CA8 /* ProgressRing.swift */; };
+		DDD60A4C8AC42E97A87CBDD8 /* PulsingMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6678D34B3C0C24BDCFFAA43 /* PulsingMarker.swift */; };
+		E77066E1728DC28124CE3570 /* RoutePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1176828828C05DDAD17FB /* RoutePreview.swift */; };
+		BE142F3C061BBCAB692BD75E /* StatTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E7BB97D6A89CED0768A264 /* StatTile.swift */; };
+		65D3E6946E6A42F3AD061B4E /* StepsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136B8A0CF889019688C8C2BD /* StepsChart.swift */; };
+		28F34D7D3B44427E321A14D3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234A60582AA49F79A20073D /* Theme.swift */; };
+		FC25B8B2CD933BEA3BDEC815 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1925E8E16292C3DE541DAEDE /* HistoryView.swift */; };
+		4F3EBD50AA7BD48D26FF269D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1469BFF3B3AA822BDB255ED4 /* OnboardingView.swift */; };
+		CA5497C974ED2BC5141166BE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A61AEA27814A83F034EBD1 /* ProfileView.swift */; };
+		8F507754FE128FE43E84FAB0 /* ReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FF686C98CECFE92F60351F /* ReplayView.swift */; };
+		C8D5177E0B3008E1554E5B3A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D938BE3EE37B2BDF3383FAFD /* RootView.swift */; };
+		522BC6DE179D895290C73C16 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AC660007AEF94C3DE13F84 /* ShareCardView.swift */; };
+		0F0042BC35E34018242EB2F4 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DD41935B3F9D134A25BA7B /* TodayView.swift */; };
+		8DB9C3B6A21B7EB92ED49A0C /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D880FFF2ABBBFC0E61754BE /* TrendsView.swift */; };
+		FB56AA9123B6BC76D8FC00C5 /* WalkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE886BDE04D31F4039A6C98 /* WalkDetailView.swift */; };
+		1D162E2D99493EB804CC3C0E /* WalkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB8D914403F86197C536050 /* WalkSummaryView.swift */; };
+		508098A842BDBD87AF4D4F42 /* WalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E71D7B9D8BFE47E1ED740 /* WalkView.swift */; };
+		FA1EF3F257E550313F76D471 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1749AA7D2B1864A38435323 /* Assets.xcassets */; };
+		F492A1839885D968D556A273 /* StepsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15CCFF5226F95BA77C88542 /* StepsWidget.swift */; };
+		82DC021BE739F7176C96CD62 /* StrideWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F48DCC5418EE7E3FAEFD64E /* StrideWidgetBundle.swift */; };
+		176DD52A66D9A0E7AF547243 /* WalkLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D100C27B59A125E0AF986 /* WalkLiveActivity.swift */; };
+		3F344390AEAAF9FFB4846FE1 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CCE0F396776A8B74FD6011F /* AppGroup.swift */; };
+		145AFE14ABAFD56E1D8AF6CC /* StrideSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4F33440CD27602B53B1902 /* StrideSnapshot.swift */; };
+		4EB0E936B06B720DA5A7B03B /* WalkActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14571C02DF07B9403402F804 /* WalkActivityAttributes.swift */; };
+		7462EF43A00765E7AC45E02A /* StrideIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848334C11F9688B064F1D6F5 /* StrideIntents.swift */; };
+		B6EBF7AA4F735DD0D3DA9DDA /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A978A2662EF1621CAABF15 /* Format.swift */; };
+		98533DF37089E81DEF0A65BF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234A60582AA49F79A20073D /* Theme.swift */; };
+		A268918424F7BBC11DB752F2 /* StrideWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CFEE55A02984C083C52C8EFC /* StrideWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		6332FA84B7BDEC43CA23DF4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B349027366F684A61204B00;
+			remoteInfo = StrideWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		496AF46EC2762DDF91F78F13 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A268918424F7BBC11DB752F2 /* StrideWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		F5BF48AA40CAD7891EB709FC /* Stride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stride.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84337AD8D27FCD69AF2C4FC2 /* Stride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stride.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFEE55A02984C083C52C8EFC /* StrideWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StrideWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1749AA7D2B1864A38435323 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		229E017B9EEFB7AA56D2BA9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BB4E9A9FF62D0F0C98945E3D /* Stride.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stride.entitlements; sourceTree = "<group>"; };
-		D58A0EE49227F53B6A1F1444 /* StrideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideApp.swift; sourceTree = "<group>"; };
+		DF8FA03CC54D78BC0CC2121A /* StrideShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideShortcuts.swift; sourceTree = "<group>"; };
+		649AADEBC3E69EC395F55B1E /* Achievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievements.swift; sourceTree = "<group>"; };
 		1FA624F0C32BEB22F50D202B /* CalorieEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieEstimator.swift; sourceTree = "<group>"; };
 		87A978A2662EF1621CAABF15 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
 		29FA7A8DE980E1F58E9B8C0F /* RouteTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTrack.swift; sourceTree = "<group>"; };
+		A43262493454CA032B61C057 /* Trends.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trends.swift; sourceTree = "<group>"; };
 		E2076B4A04421BB47F118404 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		55A4080CF204E834DA15DCEA /* Walk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Walk.swift; sourceTree = "<group>"; };
+		AD0B5B172AFCC6B646AA250E /* AltimeterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltimeterService.swift; sourceTree = "<group>"; };
+		F2DA69DEC179180CECC87C1A /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
 		24D30AD63DC62999230BB3B3 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		B15AF7F5B72CCCD29986DB17 /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
 		91F130ED70CDC3EA6B71B45D /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		9941D221F6B016D1E2A8A607 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		47EDCA951E51AA41288B1FC7 /* PedometerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerService.swift; sourceTree = "<group>"; };
 		FBB4FA9E3241AE7C7B1AF05B /* WalkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkStore.swift; sourceTree = "<group>"; };
+		1CCE0F396776A8B74FD6011F /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		848334C11F9688B064F1D6F5 /* StrideIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideIntents.swift; sourceTree = "<group>"; };
+		4A4F33440CD27602B53B1902 /* StrideSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideSnapshot.swift; sourceTree = "<group>"; };
+		14571C02DF07B9403402F804 /* WalkActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkActivityAttributes.swift; sourceTree = "<group>"; };
+		BB4E9A9FF62D0F0C98945E3D /* Stride.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stride.entitlements; sourceTree = "<group>"; };
+		D58A0EE49227F53B6A1F1444 /* StrideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideApp.swift; sourceTree = "<group>"; };
 		54AB6C4E38E9A44E725A0836 /* TodayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayModel.swift; sourceTree = "<group>"; };
 		586596C04125F061D90FDF99 /* WalkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSession.swift; sourceTree = "<group>"; };
-		1925E8E16292C3DE541DAEDE /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		1469BFF3B3AA822BDB255ED4 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		34A61AEA27814A83F034EBD1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		D938BE3EE37B2BDF3383FAFD /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		83DD41935B3F9D134A25BA7B /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
-		5AE886BDE04D31F4039A6C98 /* WalkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkDetailView.swift; sourceTree = "<group>"; };
-		7CB8D914403F86197C536050 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
-		B76E71D7B9D8BFE47E1ED740 /* WalkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkView.swift; sourceTree = "<group>"; };
+		D1746C1807F8C48C163907D1 /* AwardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardsView.swift; sourceTree = "<group>"; };
 		0DF788244EA471893F83E677 /* AppBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackground.swift; sourceTree = "<group>"; };
 		4C4A939CB14C62B80083AD99 /* ConfettiBurst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiBurst.swift; sourceTree = "<group>"; };
 		F491CFDFA6A159359AB19CA8 /* ProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRing.swift; sourceTree = "<group>"; };
@@ -71,10 +125,33 @@
 		C3E7BB97D6A89CED0768A264 /* StatTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTile.swift; sourceTree = "<group>"; };
 		136B8A0CF889019688C8C2BD /* StepsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsChart.swift; sourceTree = "<group>"; };
 		B234A60582AA49F79A20073D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		1925E8E16292C3DE541DAEDE /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		1469BFF3B3AA822BDB255ED4 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		34A61AEA27814A83F034EBD1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		19FF686C98CECFE92F60351F /* ReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplayView.swift; sourceTree = "<group>"; };
+		D938BE3EE37B2BDF3383FAFD /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A9AC660007AEF94C3DE13F84 /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
+		83DD41935B3F9D134A25BA7B /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		7D880FFF2ABBBFC0E61754BE /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
+		5AE886BDE04D31F4039A6C98 /* WalkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkDetailView.swift; sourceTree = "<group>"; };
+		7CB8D914403F86197C536050 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
+		B76E71D7B9D8BFE47E1ED740 /* WalkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkView.swift; sourceTree = "<group>"; };
+		C6C730D4E896354A1BAA548F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F15CCFF5226F95BA77C88542 /* StepsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsWidget.swift; sourceTree = "<group>"; };
+		8F48DCC5418EE7E3FAEFD64E /* StrideWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrideWidgetBundle.swift; sourceTree = "<group>"; };
+		46032C0FFA57E2D3E8A7020F /* StrideWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StrideWidgets.entitlements; sourceTree = "<group>"; };
+		A80D100C27B59A125E0AF986 /* WalkLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkLiveActivity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		424153ED3CD079DB4DB459AF /* Frameworks */ = {
+		6EFAB1ECC0D092E20FE51FCD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82F7385D4FEF2F2E8083F7F6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -88,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				DDB10F0E5C4B609EEF3855A6 /* Stride */,
+				2B3A576B771C02AD203E495F /* StrideWidgets */,
 				2F3A6B1E78F896718625FF06 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,17 +173,28 @@
 		2F3A6B1E78F896718625FF06 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F5BF48AA40CAD7891EB709FC /* Stride.app */,
+				84337AD8D27FCD69AF2C4FC2 /* Stride.app */,
+				CFEE55A02984C083C52C8EFC /* StrideWidgets.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		0C5F236F6D101E80163BC80E /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				DF8FA03CC54D78BC0CC2121A /* StrideShortcuts.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		83C9FB348DD1BE5C4E71AD17 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				649AADEBC3E69EC395F55B1E /* Achievements.swift */,
 				1FA624F0C32BEB22F50D202B /* CalorieEstimator.swift */,
 				87A978A2662EF1621CAABF15 /* Format.swift */,
 				29FA7A8DE980E1F58E9B8C0F /* RouteTrack.swift */,
+				A43262493454CA032B61C057 /* Trends.swift */,
 				E2076B4A04421BB47F118404 /* UserProfile.swift */,
 				55A4080CF204E834DA15DCEA /* Walk.swift */,
 			);
@@ -115,12 +204,27 @@
 		5D981764EE9591DA9B9FFC91 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AD0B5B172AFCC6B646AA250E /* AltimeterService.swift */,
+				F2DA69DEC179180CECC87C1A /* BackupService.swift */,
 				24D30AD63DC62999230BB3B3 /* HealthKitService.swift */,
+				B15AF7F5B72CCCD29986DB17 /* LiveActivityController.swift */,
 				91F130ED70CDC3EA6B71B45D /* LocationService.swift */,
+				9941D221F6B016D1E2A8A607 /* NotificationService.swift */,
 				47EDCA951E51AA41288B1FC7 /* PedometerService.swift */,
 				FBB4FA9E3241AE7C7B1AF05B /* WalkStore.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		C806DA53F8328233AE329B73 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				1CCE0F396776A8B74FD6011F /* AppGroup.swift */,
+				848334C11F9688B064F1D6F5 /* StrideIntents.swift */,
+				4A4F33440CD27602B53B1902 /* StrideSnapshot.swift */,
+				14571C02DF07B9403402F804 /* WalkActivityAttributes.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		6F76DCB4223BDAB12F3082DD /* ViewModels */ = {
@@ -150,11 +254,15 @@
 		BAA359037E7B54C4966A140C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D1746C1807F8C48C163907D1 /* AwardsView.swift */,
 				1925E8E16292C3DE541DAEDE /* HistoryView.swift */,
 				1469BFF3B3AA822BDB255ED4 /* OnboardingView.swift */,
 				34A61AEA27814A83F034EBD1 /* ProfileView.swift */,
+				19FF686C98CECFE92F60351F /* ReplayView.swift */,
 				D938BE3EE37B2BDF3383FAFD /* RootView.swift */,
+				A9AC660007AEF94C3DE13F84 /* ShareCardView.swift */,
 				83DD41935B3F9D134A25BA7B /* TodayView.swift */,
+				7D880FFF2ABBBFC0E61754BE /* TrendsView.swift */,
 				5AE886BDE04D31F4039A6C98 /* WalkDetailView.swift */,
 				7CB8D914403F86197C536050 /* WalkSummaryView.swift */,
 				B76E71D7B9D8BFE47E1ED740 /* WalkView.swift */,
@@ -170,33 +278,66 @@
 				229E017B9EEFB7AA56D2BA9A /* Info.plist */,
 				BB4E9A9FF62D0F0C98945E3D /* Stride.entitlements */,
 				D58A0EE49227F53B6A1F1444 /* StrideApp.swift */,
+				0C5F236F6D101E80163BC80E /* Intents */,
 				83C9FB348DD1BE5C4E71AD17 /* Models */,
 				5D981764EE9591DA9B9FFC91 /* Services */,
+				C806DA53F8328233AE329B73 /* Shared */,
 				6F76DCB4223BDAB12F3082DD /* ViewModels */,
 				BAA359037E7B54C4966A140C /* Views */,
 			);
 			path = Stride;
 			sourceTree = "<group>";
 		};
+		2B3A576B771C02AD203E495F /* StrideWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				C6C730D4E896354A1BAA548F /* Info.plist */,
+				F15CCFF5226F95BA77C88542 /* StepsWidget.swift */,
+				8F48DCC5418EE7E3FAEFD64E /* StrideWidgetBundle.swift */,
+				46032C0FFA57E2D3E8A7020F /* StrideWidgets.entitlements */,
+				A80D100C27B59A125E0AF986 /* WalkLiveActivity.swift */,
+			);
+			path = StrideWidgets;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		42AEFBAE01D2DFD981F7DA7D /* Stride */ = {
+		E3435DDA2687639586BF0B70 /* Stride */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F2F62AAE534BA46EC59716F3 /* Build configuration list for PBXNativeTarget "Stride" */;
+			buildConfigurationList = 5505F9AF814A7F0992DE2402 /* Build configuration list for PBXNativeTarget "Stride" */;
 			buildPhases = (
-				7A70D71C385290AF96BF1031 /* Sources */,
-				424153ED3CD079DB4DB459AF /* Frameworks */,
-				285BB1C1430063331E9F5DD0 /* Resources */,
+				4821909E9BF9E73E471FEA84 /* Sources */,
+				6EFAB1ECC0D092E20FE51FCD /* Frameworks */,
+				F667297ED3AB90EAC07798D4 /* Resources */,
+				496AF46EC2762DDF91F78F13 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2DC6B12B35EDE702AA2274D /* PBXTargetDependency */,
+			);
+			name = Stride;
+			productName = Stride;
+			productReference = 84337AD8D27FCD69AF2C4FC2 /* Stride.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3B349027366F684A61204B00 /* StrideWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D5B5193CF8AC4E310989886 /* Build configuration list for PBXNativeTarget "StrideWidgets" */;
+			buildPhases = (
+				95DAD0AC89EF1F52E2DEFFA0 /* Sources */,
+				82F7385D4FEF2F2E8083F7F6 /* Frameworks */,
+				6D28937945D4D810B2D340B2 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Stride;
-			productName = Stride;
-			productReference = F5BF48AA40CAD7891EB709FC /* Stride.app */;
-			productType = "com.apple.product-type.application";
+			name = StrideWidgets;
+			productName = StrideWidgets;
+			productReference = CFEE55A02984C083C52C8EFC /* StrideWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -208,7 +349,10 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					42AEFBAE01D2DFD981F7DA7D = {
+					E3435DDA2687639586BF0B70 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					3B349027366F684A61204B00 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -226,59 +370,106 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				42AEFBAE01D2DFD981F7DA7D /* Stride */,
+				E3435DDA2687639586BF0B70 /* Stride */,
+				3B349027366F684A61204B00 /* StrideWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		285BB1C1430063331E9F5DD0 /* Resources */ = {
+		F667297ED3AB90EAC07798D4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22A46C9CE9DD37651C9EA68A /* Assets.xcassets in Resources */,
+				FA1EF3F257E550313F76D471 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6D28937945D4D810B2D340B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		7A70D71C385290AF96BF1031 /* Sources */ = {
+		4821909E9BF9E73E471FEA84 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76E124CB19A3CC49C392B799 /* StrideApp.swift in Sources */,
-				1A3C9AF8458B8AE328B529F8 /* CalorieEstimator.swift in Sources */,
-				0EFA671C45FAF5097D4A3106 /* Format.swift in Sources */,
-				90A4AD6B0AECFB603663E36F /* RouteTrack.swift in Sources */,
-				428E9D55A58B25588ECAA822 /* UserProfile.swift in Sources */,
-				786600AC89CE653F8CDE7667 /* Walk.swift in Sources */,
-				7610C5C98E5BD52EA85F6135 /* HealthKitService.swift in Sources */,
-				71365948EFC7D026271D7DD3 /* LocationService.swift in Sources */,
-				F1BF2F1AA929DA5BEC7FD7B8 /* PedometerService.swift in Sources */,
-				7ACE6146F0A3C01C37751393 /* WalkStore.swift in Sources */,
-				CF89808B8C8FF088D55E59D0 /* TodayModel.swift in Sources */,
-				934EA668E938120ABA345B29 /* WalkSession.swift in Sources */,
-				01D40406DFB638C12B1BC937 /* HistoryView.swift in Sources */,
-				0EE19AEF2FE5ED495EC2B81D /* OnboardingView.swift in Sources */,
-				FC6AAEB51CFFEE563D1A5C92 /* ProfileView.swift in Sources */,
-				D5E30128C131D1FB2E384D60 /* RootView.swift in Sources */,
-				7FEBA0DBC23CF870B2AD5E9A /* TodayView.swift in Sources */,
-				43B064819C8E1FF00EC3F353 /* WalkDetailView.swift in Sources */,
-				29D9D069BD810F281F9C05F6 /* WalkSummaryView.swift in Sources */,
-				690D685F90624421C7FAE427 /* WalkView.swift in Sources */,
-				DDA2E2A2AB4C8B00BA101F1B /* AppBackground.swift in Sources */,
-				A56949155E56DE4A50C0EBBE /* ConfettiBurst.swift in Sources */,
-				6DF20FA56DCEE0F3B3112EFF /* ProgressRing.swift in Sources */,
-				FF92138F8AB1C2D72DC38843 /* PulsingMarker.swift in Sources */,
-				8A074169FBAD48AA177CA7FF /* RoutePreview.swift in Sources */,
-				1AD6D4CC51416E8FE7F18B04 /* StatTile.swift in Sources */,
-				9A6DA4E475C30C7BF3A82B1A /* StepsChart.swift in Sources */,
-				AD8BF2B12B68E70ECC2B9A8E /* Theme.swift in Sources */,
+				C32C989B4947C93A520BD81D /* StrideShortcuts.swift in Sources */,
+				2B22EF54E21AA430325A6214 /* Achievements.swift in Sources */,
+				7F6526402CBF9D4BEDC148A9 /* CalorieEstimator.swift in Sources */,
+				E724BCD9617115A4E9DD82BE /* Format.swift in Sources */,
+				FEB617AF1043169AF9DA9B1B /* RouteTrack.swift in Sources */,
+				FD23F8814ED2BA1B68DC7AC4 /* Trends.swift in Sources */,
+				AD4EAAFB6C09D8FB401CDFAB /* UserProfile.swift in Sources */,
+				8C8A48BE66534AB35128B3F4 /* Walk.swift in Sources */,
+				F81C68020854F91AAABB04EB /* AltimeterService.swift in Sources */,
+				0190BB4B3674BAC292FAF2F2 /* BackupService.swift in Sources */,
+				03A2419A0D15FE4ECF73C28A /* HealthKitService.swift in Sources */,
+				5ECFCBA40692100B76D814A5 /* LiveActivityController.swift in Sources */,
+				0492639DFB593F89E08F8B7F /* LocationService.swift in Sources */,
+				8206B4121F72AF1883F5D3F6 /* NotificationService.swift in Sources */,
+				68230B5D822A64BA23F90DE2 /* PedometerService.swift in Sources */,
+				F4A54B59D7363CB4478238B1 /* WalkStore.swift in Sources */,
+				AA325BC8FC8EF3B0744FA7FA /* AppGroup.swift in Sources */,
+				25FE1DC3BC9348C34CCDFA0F /* StrideIntents.swift in Sources */,
+				6503D14F376414B7A5F6178B /* StrideSnapshot.swift in Sources */,
+				D819AC5FB792A9A8399BA499 /* WalkActivityAttributes.swift in Sources */,
+				4C426399014F65AE41098D1D /* StrideApp.swift in Sources */,
+				B8ABB318DDF215F5547A722D /* TodayModel.swift in Sources */,
+				99028D53C0AF380F760CBCFB /* WalkSession.swift in Sources */,
+				01BD7EDC9863BFEF957E3B8A /* AwardsView.swift in Sources */,
+				F308C8655553FE75E4D6FE2D /* AppBackground.swift in Sources */,
+				360A098EA900191D1ADD617B /* ConfettiBurst.swift in Sources */,
+				58AB608AA3C99BF012C7FECE /* ProgressRing.swift in Sources */,
+				DDD60A4C8AC42E97A87CBDD8 /* PulsingMarker.swift in Sources */,
+				E77066E1728DC28124CE3570 /* RoutePreview.swift in Sources */,
+				BE142F3C061BBCAB692BD75E /* StatTile.swift in Sources */,
+				65D3E6946E6A42F3AD061B4E /* StepsChart.swift in Sources */,
+				28F34D7D3B44427E321A14D3 /* Theme.swift in Sources */,
+				FC25B8B2CD933BEA3BDEC815 /* HistoryView.swift in Sources */,
+				4F3EBD50AA7BD48D26FF269D /* OnboardingView.swift in Sources */,
+				CA5497C974ED2BC5141166BE /* ProfileView.swift in Sources */,
+				8F507754FE128FE43E84FAB0 /* ReplayView.swift in Sources */,
+				C8D5177E0B3008E1554E5B3A /* RootView.swift in Sources */,
+				522BC6DE179D895290C73C16 /* ShareCardView.swift in Sources */,
+				0F0042BC35E34018242EB2F4 /* TodayView.swift in Sources */,
+				8DB9C3B6A21B7EB92ED49A0C /* TrendsView.swift in Sources */,
+				FB56AA9123B6BC76D8FC00C5 /* WalkDetailView.swift in Sources */,
+				1D162E2D99493EB804CC3C0E /* WalkSummaryView.swift in Sources */,
+				508098A842BDBD87AF4D4F42 /* WalkView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		95DAD0AC89EF1F52E2DEFFA0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F492A1839885D968D556A273 /* StepsWidget.swift in Sources */,
+				82DC021BE739F7176C96CD62 /* StrideWidgetBundle.swift in Sources */,
+				176DD52A66D9A0E7AF547243 /* WalkLiveActivity.swift in Sources */,
+				3F344390AEAAF9FFB4846FE1 /* AppGroup.swift in Sources */,
+				145AFE14ABAFD56E1D8AF6CC /* StrideSnapshot.swift in Sources */,
+				4EB0E936B06B720DA5A7B03B /* WalkActivityAttributes.swift in Sources */,
+				7462EF43A00765E7AC45E02A /* StrideIntents.swift in Sources */,
+				B6EBF7AA4F735DD0D3DA9DDA /* Format.swift in Sources */,
+				98533DF37089E81DEF0A65BF /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C2DC6B12B35EDE702AA2274D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B349027366F684A61204B00 /* StrideWidgets */;
+			targetProxy = 6332FA84B7BDEC43CA23DF4F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		EA36911E0558335EF93E3D17 /* Debug */ = {
@@ -404,7 +595,7 @@
 			};
 			name = Release;
 		};
-		2B300D60D80F64DC44AB8175 /* Debug */ = {
+		5F4B238EE94B0BF147244664 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -420,7 +611,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bishuu.stride;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -434,7 +625,7 @@
 			};
 			name = Debug;
 		};
-		FCCECCC0341448E789A096F7 /* Release */ = {
+		97A4CD7AE8FE5C416A142C2D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -450,7 +641,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bishuu.stride;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -458,6 +649,64 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		0397D72E7A7E863BACE965F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StrideWidgets/StrideWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StrideWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Stride;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bishuu.stride.StrideWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		090166C06F50419C94209CBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StrideWidgets/StrideWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StrideWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Stride;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bishuu.stride.StrideWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -476,11 +725,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F2F62AAE534BA46EC59716F3 /* Build configuration list for PBXNativeTarget "Stride" */ = {
+		5505F9AF814A7F0992DE2402 /* Build configuration list for PBXNativeTarget "Stride" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2B300D60D80F64DC44AB8175 /* Debug */,
-				FCCECCC0341448E789A096F7 /* Release */,
+				5F4B238EE94B0BF147244664 /* Debug */,
+				97A4CD7AE8FE5C416A142C2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D5B5193CF8AC4E310989886 /* Build configuration list for PBXNativeTarget "StrideWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0397D72E7A7E863BACE965F4 /* Debug */,
+				090166C06F50419C94209CBE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

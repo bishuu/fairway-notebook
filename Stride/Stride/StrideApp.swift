@@ -12,6 +12,8 @@ struct StrideApp: App {
                 .environmentObject(container.health)
                 .environmentObject(container.today)
                 .environmentObject(container.session)
+                .environmentObject(container.notifications)
+                .environmentObject(container.intents)
         }
     }
 }
@@ -24,6 +26,8 @@ final class AppContainer: ObservableObject {
     let health: HealthKitService
     let today: TodayModel
     let session: WalkSession
+    let notifications: NotificationService
+    let intents: IntentBridge
 
     init() {
         let profile = UserProfile()
@@ -38,5 +42,7 @@ final class AppContainer: ObservableObject {
                               health: health,
                               profile: profile,
                               store: store)
+        notifications = NotificationService()
+        intents = IntentBridge.shared
     }
 }

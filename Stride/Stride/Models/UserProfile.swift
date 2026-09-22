@@ -55,6 +55,7 @@ final class UserProfile: ObservableObject {
         static let gender = "profile.gender"
         static let dailyGoal = "profile.dailyGoal"
         static let hasOnboarded = "profile.hasOnboarded"
+        static let units = "profile.units"
     }
 
     @Published var weightLb: Double { didSet { save() } }
@@ -63,6 +64,7 @@ final class UserProfile: ObservableObject {
     @Published var gender: Gender { didSet { save() } }
     @Published var dailyGoal: Int { didSet { save() } }
     @Published var hasOnboarded: Bool { didSet { save() } }
+    @Published var units: Units { didSet { AppGroup.units = units; save() } }
 
     private let defaults = UserDefaults.standard
 
@@ -76,6 +78,9 @@ final class UserProfile: ObservableObject {
         let storedGoal = UserDefaults.standard.integer(forKey: Keys.dailyGoal)
         dailyGoal = storedGoal > 0 ? storedGoal : 10_000
         hasOnboarded = UserDefaults.standard.bool(forKey: Keys.hasOnboarded)
+        let storedUnits = Units(rawValue: UserDefaults.standard.string(forKey: Keys.units) ?? "") ?? .imperial
+        units = storedUnits
+        AppGroup.units = storedUnits
     }
 
     var body: BodyStats {
@@ -84,6 +89,12 @@ final class UserProfile: ObservableObject {
 
     var heightLabel: String { "\(heightFeet)′ \(heightInches)″" }
 
+    /// Weight in the unit currently shown, for the editor.
+    var displayWeight: Double {
+        get { units == .metric ? weightLb * 0.45359237 : weightLb }
+        set { weightLb = units == .metric ? newValue / 0.45359237 : newValue }
+    }
+
     private func save() {
         defaults.set(weightLb, forKey: Keys.weightLb)
         defaults.set(heightFeet, forKey: Keys.heightFeet)
@@ -91,5 +102,6 @@ final class UserProfile: ObservableObject {
         defaults.set(gender.rawValue, forKey: Keys.gender)
         defaults.set(dailyGoal, forKey: Keys.dailyGoal)
         defaults.set(hasOnboarded, forKey: Keys.hasOnboarded)
+        defaults.set(units.rawValue, forKey: Keys.units)
     }
 }

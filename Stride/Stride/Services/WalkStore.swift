@@ -48,6 +48,18 @@ final class WalkStore: ObservableObject {
         walks.first { $0.id == id }
     }
 
+    /// Adds walks from a backup that are not already here. Returns how many were added.
+    @discardableResult
+    func merge(_ incoming: [Walk]) -> Int {
+        let existing = Set(walks.map { $0.id })
+        let fresh = incoming.filter { !existing.contains($0.id) }
+        guard !fresh.isEmpty else { return 0 }
+        walks.append(contentsOf: fresh)
+        walks.sort { $0.start > $1.start }
+        persist()
+        return fresh.count
+    }
+
     // MARK: - Totals
 
     var totalSteps: Int { walks.reduce(0) { $0 + $1.steps } }

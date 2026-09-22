@@ -69,10 +69,18 @@ struct WalkSummaryView: View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             StatTile(icon: "figure.walk", value: Format.steps(session.steps), label: "Steps", tint: Theme.mint)
             StatTile(icon: "point.topleft.down.to.point.bottomright.curvepath.fill",
-                     value: Format.miles(session.distanceMeters), unit: "mi", label: "Distance", tint: Theme.sky)
+                     value: Format.distanceValue(session.distanceMeters), unit: Format.units.distanceSuffix, label: "Distance", tint: Theme.sky)
             StatTile(icon: "flame.fill", value: Format.calories(session.calories), unit: "kcal", label: "Calories", tint: Theme.flame)
-            StatTile(icon: "speedometer", value: Format.pace(secondsPerMile: session.averagePaceSecondsPerMile),
-                     unit: "/mi", label: "Avg pace", tint: Theme.violet)
+            StatTile(icon: "speedometer", value: Format.pace(secondsPerMeter: session.averagePaceSecondsPerMeter),
+                     unit: "/\(Format.units.distanceSuffix)", label: "Avg pace", tint: Theme.violet)
+            if session.elevationGainMeters > 2 {
+                StatTile(icon: "mountain.2.fill", value: Format.elevation(session.elevationGainMeters),
+                         label: "Climbed", tint: Theme.teal)
+            }
+            if let bpm = session.heartRate {
+                StatTile(icon: "heart.fill", value: Format.heartRate(bpm), unit: "bpm",
+                         label: "Heart rate", tint: Theme.rose)
+            }
         }
     }
 

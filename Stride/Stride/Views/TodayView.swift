@@ -50,6 +50,10 @@ struct TodayView: View {
         .onChange(of: today.goalReached) { wasReached, isReached in
             if isReached && !wasReached && appeared { goalCelebrations += 1 }
         }
+        .onChange(of: today.steps) { _, _ in
+            today.publishSnapshot(walkActive: session.isRunning)
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: today.streakDays)
         .sensoryFeedback(.success, trigger: goalCelebrations)
     }
 
@@ -66,7 +70,10 @@ struct TodayView: View {
                     .font(.system(.largeTitle, design: .rounded).weight(.bold))
             }
             Spacer()
-            healthBadge
+            VStack(alignment: .trailing, spacing: 6) {
+                healthBadge
+                if today.streakDays > 0 { streakBadge }
+            }
         }
         .padding(.top, 8)
     }
@@ -91,6 +98,19 @@ struct TodayView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .background(.ultraThinMaterial, in: Capsule())
+    }
+
+    private var streakBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "flame.fill")
+                .foregroundStyle(Theme.flameGradient)
+            Text("\(today.streakDays) day streak")
+                .font(.caption.weight(.semibold))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(.ultraThinMaterial, in: Capsule())
+        .transition(.scale.combined(with: .opacity))
     }
 
     private var ringCard: some View {
@@ -139,7 +159,7 @@ struct TodayView: View {
     private var statsRow: some View {
         HStack(spacing: 12) {
             StatTile(icon: "point.topleft.down.to.point.bottomright.curvepath.fill",
-                     value: Format.miles(today.distanceMeters), unit: "mi",
+                     value: Format.distanceValue(today.distanceMeters), unit: Format.units.distanceSuffix,
                      label: "Distance", tint: Theme.sky)
             StatTile(icon: "flame.fill",
                      value: Format.calories(today.calories), unit: "kcal",

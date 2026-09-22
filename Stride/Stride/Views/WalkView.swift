@@ -213,13 +213,29 @@ struct WalkView: View {
 
             HStack(spacing: 8) {
                 BigStat(value: Format.steps(session.steps), label: "Steps", tint: Theme.mint)
-                BigStat(value: Format.miles(session.distanceMeters), label: "Miles", tint: Theme.sky)
+                BigStat(value: Format.distanceValue(session.distanceMeters), label: Format.units.distanceSuffix, tint: Theme.sky)
                 BigStat(value: Format.calories(session.calories), label: "kcal", tint: Theme.flame)
-                BigStat(value: Format.pace(secondsPerMile: session.currentPaceSecondsPerMile ?? session.averagePaceSecondsPerMile),
+                BigStat(value: Format.pace(secondsPerMeter: session.currentPaceSecondsPerMeter ?? session.averagePaceSecondsPerMeter),
                         label: "Pace", tint: Theme.violet)
             }
             .animation(.spring(response: 0.5, dampingFraction: 0.9), value: session.steps)
             .animation(.spring(response: 0.5, dampingFraction: 0.9), value: session.elapsed)
+
+            if session.elevationGainMeters > 2 || session.heartRate != nil {
+                HStack(spacing: 18) {
+                    if session.elevationGainMeters > 2 {
+                        Label(Format.elevation(session.elevationGainMeters), systemImage: "mountain.2.fill")
+                            .foregroundStyle(Theme.teal)
+                    }
+                    if let bpm = session.heartRate {
+                        Label("\(Format.heartRate(bpm)) bpm", systemImage: "heart.fill")
+                            .foregroundStyle(Theme.rose)
+                            .symbolEffect(.pulse)
+                    }
+                }
+                .font(.footnote.weight(.bold))
+                .transition(.opacity)
+            }
 
             HStack(spacing: 16) {
                 Button {

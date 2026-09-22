@@ -32,7 +32,10 @@ final class HealthKitService: ObservableObject {
     private let stepType = HKQuantityType(.stepCount)
     private let distanceType = HKQuantityType(.distanceWalkingRunning)
     private let energyType = HKQuantityType(.activeEnergyBurned)
+    private let heartRateType = HKQuantityType(.heartRate)
+    private let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
     private var observerQuery: HKObserverQuery?
+    private var heartRateQuery: HKAnchoredObjectQuery?
 
     /// True after the permission sheet has been shown at least once.
     @Published private(set) var hasRequestedAccess: Bool
@@ -67,6 +70,7 @@ final class HealthKitService: ObservableObject {
             stepType,
             distanceType,
             energyType,
+            heartRateType,
             HKObjectType.workoutType(),
             HKQuantityType(.bodyMass),
             HKQuantityType(.height),
@@ -134,6 +138,59 @@ final class HealthKitService: ObservableObject {
                     results.append(DailySteps(date: statistics.startDate, steps: Int(value)))
                 }
                 continuation.resume(returning: results)
+            }
+            store.execute(query)
+        }
+    }
+
+    // MARK: - Heart rate
+
+    /// Streams heart rate while a walk is running. Values come from a paired
+    /// Apple Watch or any other monitor that writes to Health; without one
+    /// the handler simply never fires.
+    func startHeartRateUpdates(from start: Date, onUpdate: @escaping (Double) -> Void) {
+        guard isAvailable else { return }
+        stopHeartRateUpdates()
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: nil, options: .strictStartDate)
+
+        func handle(_ samples: [HKSample]?) {
+            guard let latest = samples?.compactMap({ $0 as? HKQuantitySample })
+                .max(by: { $0.endDate < $1.endDate }) else { return }
+            let value = latest.quantity.doubleValue(for: self.heartRateUnit)
+            DispatchQueue.main.async { onUpdate(value) }
+        }
+
+        let query = HKAnchoredObjectQuery(type: heartRateType, predicate: predicate,
+                                          anchor: nil, limit: HKObjectQueryNoLimit) { _, samples, _, _, _ in
+            handle(samples)
+        }
+        query.updateHandler = { _, samples, _, _, _ in
+            handle(samples)
+        }
+        heartRateQuery = query
+        store.execute(query)
+    }
+
+    func stopHeartRateUpdates() {
+        if let heartRateQuery { store.stop(heartRateQuery) }
+        heartRateQuery = nil
+    }
+
+    /// Average and highest heart rate recorded across a finished walk.
+    func heartRateSummary(from start: Date, to end: Date) async -> (average: Double, max: Double)? {
+        guard isAvailable, end > start else { return nil }
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: heartRateType,
+                                          quantitySamplePredicate: predicate,
+                                          options: [.discreteAverage, .discreteMax]) { _, statistics, _ in
+                guard let statistics,
+                      let average = statistics.averageQuantity()?.doubleValue(for: self.heartRateUnit),
+                      let maximum = statistics.maximumQuantity()?.doubleValue(for: self.heartRateUnit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: (average, maximum))
             }
             store.execute(query)
         }

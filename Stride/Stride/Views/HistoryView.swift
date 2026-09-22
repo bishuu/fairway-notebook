@@ -1,11 +1,13 @@
 import SwiftUI
 
-/// Past walks and the step history chart.
+/// Past walks, the step history, trend reports and the badge collection.
 @MainActor
 struct HistoryView: View {
     enum Mode: String, CaseIterable, Identifiable {
         case walks = "Walks"
         case steps = "Steps"
+        case trends = "Trends"
+        case awards = "Awards"
         var id: String { rawValue }
     }
 
@@ -36,6 +38,8 @@ struct HistoryView: View {
                         switch mode {
                         case .walks: walksSection
                         case .steps: stepsSection
+                        case .trends: TrendsView()
+                        case .awards: AwardsView()
                         }
                     }
                     .padding(.horizontal, 16)
@@ -86,7 +90,7 @@ struct HistoryView: View {
             HStack {
                 totalItem(value: "\(store.walks.count)", label: store.walks.count == 1 ? "walk" : "walks", tint: Theme.mint)
                 Divider().frame(height: 34)
-                totalItem(value: Format.miles(store.totalDistanceMeters, digits: 1), label: "miles", tint: Theme.sky)
+                totalItem(value: Format.distanceValue(store.totalDistanceMeters, digits: 1), label: Format.units.distanceSuffix, tint: Theme.sky)
                 Divider().frame(height: 34)
                 totalItem(value: Format.steps(store.totalSteps), label: "steps", tint: Theme.violet)
                 Divider().frame(height: 34)

@@ -21,6 +21,20 @@ enum Theme {
     static let routeColor = sky
     static let routeGlow = mint
 
+    /// Slow to fast, for colouring a route by pace. A perceptually even ramp,
+    /// so a step in colour means the same change in speed anywhere on the line.
+    static let paceRamp: [Color] = [
+        Color(red: 0.36, green: 0.27, blue: 0.71),
+        Color(red: 0.20, green: 0.49, blue: 0.87),
+        Color(red: 0.09, green: 0.69, blue: 0.79),
+        Color(red: 0.24, green: 0.86, blue: 0.60),
+        Color(red: 0.74, green: 0.94, blue: 0.39)
+    ]
+
+    static func paceColor(band: Int) -> Color {
+        paceRamp[min(max(band, 0), paceRamp.count - 1)]
+    }
+
     static let cardRadius: CGFloat = 24
 }
 
